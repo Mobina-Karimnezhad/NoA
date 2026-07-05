@@ -1,15 +1,51 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Local configuration
 local.properties
+
+# Android Studio
+.idea/
+*.iml
+
+# Log Files
+*.log
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Kotlin
+.kotlin/
+
+# Keystore
+*.jks
+*.keystore
+
+# Generated
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Google Services
+google-services.json
+
+# Secrets
+*.properties.local
+apikey.properties
+
+# Heap Dumps
+*.hprof
+
+# Temporary
+*.tmp
+*.bak
+
+# macOS
+.AppleDouble
+.LSOverride
+
+# Windows
+Desktop.ini
