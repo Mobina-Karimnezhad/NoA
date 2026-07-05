@@ -25,4 +25,4 @@ NoA is an AI-powered habit tracker application developed as a Bachelor's Final Y
 - OpenRouter API
 
 ---
-Developed by Mobina Karimnejad
+Developed by Mobina Karimnezhad
