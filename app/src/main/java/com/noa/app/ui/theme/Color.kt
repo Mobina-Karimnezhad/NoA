@@ -53,3 +53,9 @@ val TextOnPrimary = Color(0xFFFFFFFF)
 
 val Divider = Color(0xFFE2E8F0)
 val CardBorder = Color(0xFFE5E7EB)
+
+/* ===========================
+   Cards
+   =========================== */
+
+val CardBackground = Color(0xFFFDFDFD)

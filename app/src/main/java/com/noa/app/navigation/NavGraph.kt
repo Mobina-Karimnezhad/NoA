@@ -7,6 +7,8 @@ import androidx.navigation.compose.rememberNavController
 import com.noa.app.ui.screens.home.HomeScreen
 import com.noa.app.ui.screens.onboarding.OnboardingScreen
 import com.noa.app.ui.screens.splash.SplashScreen
+import com.noa.app.ui.screens.choosehabit.ChooseFirstHabitScreen
+import com.noa.app.ui.screens.createhabit.CreateHabitScreen
 
 @Composable
 fun NoANavGraph() {
@@ -38,21 +40,49 @@ fun NoANavGraph() {
 
                 onSkip = {
 
-                    navController.navigate(Routes.Home.route) {
+                    navController.navigate(Routes.ChooseFirstHabit.route) {
+
                         popUpTo(Routes.Onboarding.route) {
                             inclusive = true
                         }
+
                     }
 
                 },
 
                 onFinish = {
 
-                    navController.navigate(Routes.Home.route) {
+                    navController.navigate(Routes.ChooseFirstHabit.route) {
+
                         popUpTo(Routes.Onboarding.route) {
                             inclusive = true
                         }
+
                     }
+
+                }
+
+            )
+
+        }
+
+        composable(Routes.ChooseFirstHabit.route) {
+
+            ChooseFirstHabitScreen(
+
+                onSkip = {
+
+                    navController.navigate(Routes.Home.route)
+
+                },
+
+                onContinue = { habit ->
+
+                    navController.navigate(
+
+                        "create_habit/${habit.id}"
+
+                    )
 
                 }
 
@@ -63,6 +93,37 @@ fun NoANavGraph() {
         composable(Routes.Home.route) {
 
             HomeScreen()
+
+        }
+
+        composable(
+            route = Routes.CreateHabit.route
+        ) { backStackEntry ->
+
+            val habitId =
+                backStackEntry.arguments
+                    ?.getString("habitId")
+                    ?.toIntOrNull()
+                    ?: 1
+
+            val repository = com.noa.app.data.repository.HabitRepository()
+
+            val habit =
+                repository
+                    .getSuggestedHabits()
+                    .first { it.id == habitId }
+
+            CreateHabitScreen(
+
+                habit = habit,
+
+                onSave = {
+
+                    navController.navigate(Routes.Home.route)
+
+                }
+
+            )
 
         }
 
