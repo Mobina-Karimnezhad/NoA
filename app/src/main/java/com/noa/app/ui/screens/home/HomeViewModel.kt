@@ -8,6 +8,8 @@ import com.noa.app.data.repository.HabitRepository
 import com.noa.app.data.repository.UserHabitRepository
 import com.noa.app.domain.model.Habit
 import com.noa.app.domain.model.UserHabit
+import com.noa.app.data.repository.MotivationRepository
+
 
 class HomeViewModel : ViewModel() {
 
@@ -47,6 +49,8 @@ class HomeViewModel : ViewModel() {
     var showSuccessMessage by mutableStateOf(false)
         private set
 
+
+    val motivation = MotivationRepository.randomMotivation()
 
     fun completeToday() {
 

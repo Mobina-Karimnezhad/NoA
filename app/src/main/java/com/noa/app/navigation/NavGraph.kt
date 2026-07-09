@@ -9,11 +9,20 @@ import com.noa.app.ui.screens.onboarding.OnboardingScreen
 import com.noa.app.ui.screens.splash.SplashScreen
 import com.noa.app.ui.screens.choosehabit.ChooseFirstHabitScreen
 import com.noa.app.ui.screens.createhabit.CreateHabitScreen
+import com.noa.app.ui.screens.profile.WelcomeScreen
+import com.noa.app.ui.screens.celebration.FirstHabitCelebrationScreen
+import com.noa.app.data.repository.UserHabitRepository
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
 
 @Composable
 fun NoANavGraph() {
 
     val navController = rememberNavController()
+
 
     NavHost(
         navController = navController,
@@ -62,10 +71,12 @@ fun NoANavGraph() {
 
                 onSkip = {
 
-                    navController.navigate(Routes.ChooseFirstHabit.route) {
+                    navController.navigate(Routes.Welcome.route) {
 
                         popUpTo(Routes.Onboarding.route) {
+
                             inclusive = true
+
                         }
 
                     }
@@ -74,10 +85,12 @@ fun NoANavGraph() {
 
                 onFinish = {
 
-                    navController.navigate(Routes.ChooseFirstHabit.route) {
+                    navController.navigate(Routes.Welcome.route) {
 
                         popUpTo(Routes.Onboarding.route) {
+
                             inclusive = true
+
                         }
 
                     }
@@ -87,6 +100,34 @@ fun NoANavGraph() {
             )
 
         }
+
+        composable(Routes.Welcome.route) {
+
+            WelcomeScreen(
+
+                onContinue = {
+
+                    navController.navigate(
+
+                        Routes.ChooseFirstHabit.route
+
+                    ) {
+
+                        popUpTo(Routes.Welcome.route) {
+
+                            inclusive = true
+
+                        }
+
+                    }
+
+                }
+
+            )
+
+        }
+
+
 
         composable(Routes.ChooseFirstHabit.route) {
 
@@ -118,9 +159,8 @@ fun NoANavGraph() {
 
         }
 
-        composable(
-            route = Routes.CreateHabit.route
-        ) { backStackEntry ->
+        composable(route = Routes.CreateHabit.route) {
+            backStackEntry ->
 
             val habitId =
                 backStackEntry.arguments
@@ -139,9 +179,61 @@ fun NoANavGraph() {
 
                 habit = habit,
 
-                onSave = {
+                onSave = { userHabit ->
 
-                    navController.navigate(Routes.Home.route)
+                    UserHabitRepository.addHabit(
+
+                        userHabit
+
+                    )
+
+                    navController.navigate(
+
+                        Routes.FirstHabitCelebration.route
+
+                    ) {
+
+                        popUpTo(
+
+                            Routes.CreateHabit.route
+
+                        ) {
+
+                            inclusive = true
+
+                        }
+
+                    }
+
+                }
+
+            )
+
+        }
+
+        composable(Routes.FirstHabitCelebration.route) {
+
+            FirstHabitCelebrationScreen(
+
+                onContinue = {
+
+                    navController.navigate(
+
+                        Routes.Home.route
+
+                    ) {
+
+                        popUpTo(
+
+                            Routes.FirstHabitCelebration.route
+
+                        ) {
+
+                            inclusive = true
+
+                        }
+
+                    }
 
                 }
 

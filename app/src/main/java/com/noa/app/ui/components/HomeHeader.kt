@@ -51,7 +51,7 @@ fun HomeHeader(
 
             contentDescription = null,
 
-            modifier = Modifier.size(64.dp)
+            modifier = Modifier.size(64.dp),
 
         )
 
@@ -61,7 +61,7 @@ fun HomeHeader(
 
             modifier = Modifier.weight(1f),
 
-            horizontalAlignment = Alignment.End
+            horizontalAlignment = Alignment.Start
 
         ) {
 
@@ -73,7 +73,7 @@ fun HomeHeader(
 
                 fontWeight = FontWeight.Bold,
 
-                textAlign = TextAlign.End
+                textAlign = TextAlign.Start
 
             )
 
@@ -87,7 +87,7 @@ fun HomeHeader(
 
                 color = TextSecondary,
 
-                textAlign = TextAlign.End
+                textAlign = TextAlign.Start
 
             )
 

@@ -23,6 +23,10 @@ import com.noa.app.R
 import kotlinx.coroutines.delay
 import androidx.compose.ui.tooling.preview.Preview
 import com.noa.app.ui.theme.NoATheme
+import androidx.compose.ui.platform.LocalContext
+import com.noa.app.data.datastore.dataStore
+import kotlinx.coroutines.flow.first
+import com.noa.app.data.datastore.UserPreferences
 
 @Composable
 fun SplashScreen(
@@ -39,26 +43,29 @@ fun SplashScreen(
 
     var showSubtitle by remember { mutableStateOf(false) }
 
-    val onboardingCompleted by viewModel.onboardingCompleted.collectAsState()
+    val context = LocalContext.current
+
 
     LaunchedEffect(Unit) {
 
         delay(200)
-
         showLogo = true
 
         delay(900)
-
         showSubtitle = true
 
         delay(1200)
 
-        if (onboardingCompleted)
+        val preferences = context.dataStore.data.first()
 
+        val completed =
+            preferences[
+                UserPreferences.ONBOARDING_COMPLETED
+            ] ?: false
+
+        if (completed)
             onNavigateToHome()
-
         else
-
             onNavigateToOnboarding()
 
     }

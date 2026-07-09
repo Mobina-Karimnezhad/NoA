@@ -6,6 +6,8 @@ sealed class Routes(val route: String) {
 
     data object Onboarding : Routes("onboarding")
 
+    data object Welcome : Routes("welcome")
+
     data object Home : Routes("home")
 
     data object AddHabit : Routes("add_habit")
@@ -21,4 +23,7 @@ sealed class Routes(val route: String) {
     data object ChooseFirstHabit : Routes("choose_first_habit")
 
     data object CreateHabit : Routes("create_habit/{habitId}")
+
+    data object FirstHabitCelebration : Routes("first_habit_celebration")
+
 }

@@ -35,7 +35,7 @@ fun CreateHabitScreen(
 
     habit: Habit,
 
-    onSave: () -> Unit,
+    onSave: (UserHabit) -> Unit,
 
     viewModel: CreateHabitViewModel = viewModel()
 
@@ -148,7 +148,7 @@ fun CreateHabitScreen(
 
             onClick = {
 
-                UserHabitRepository.addHabit(
+                onSave(
 
                     UserHabit(
 
@@ -167,8 +167,6 @@ fun CreateHabitScreen(
                     )
 
                 )
-
-                onSave()
 
             }
 

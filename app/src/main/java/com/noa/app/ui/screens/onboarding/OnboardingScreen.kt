@@ -35,6 +35,7 @@ import com.noa.app.ui.theme.Divider
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 
+
 private val onboardingPages = listOf(
 
     OnboardingPage(
@@ -63,12 +64,12 @@ fun OnboardingScreen(
 
     onSkip: () -> Unit,
 
-    onFinish: () -> Unit
+    onFinish: () -> Unit,
+
+    viewModel: OnboardingViewModel = viewModel()
 
 ) {
     val scope = rememberCoroutineScope()
-
-    val viewModel: OnboardingViewModel = viewModel()
 
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -95,7 +96,7 @@ fun OnboardingScreen(
 
                 onClick = {
 
-                    viewModel.completeOnboarding {
+                    viewModel.finishOnboarding {
 
                         onSkip()
 
@@ -132,7 +133,7 @@ fun OnboardingScreen(
 
                 if (pagerState.currentPage == onboardingPages.lastIndex) {
 
-                    viewModel.completeOnboarding {
+                    viewModel.finishOnboarding {
 
                         onFinish()
 

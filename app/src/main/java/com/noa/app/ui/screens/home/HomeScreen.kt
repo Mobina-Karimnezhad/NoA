@@ -17,11 +17,31 @@ import com.noa.app.ui.components.TodayActionButton
 import com.noa.app.ui.components.ProgressRing
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.Alignment
+import com.noa.app.ui.components.MotivationCard
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
+import com.noa.app.data.datastore.UserPreferencesRepository
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 
 @Composable
 fun HomeScreen() {
 
     val viewModel: HomeViewModel = viewModel()
+
+    val context = LocalContext.current
+
+    val repository = remember {
+
+        UserPreferencesRepository(context)
+
+    }
+
+    val userName by repository.userName.collectAsState(
+
+        initial = "دوست من"
+
+    )
 
     val firstHabit = viewModel.currentHabit
 
@@ -43,7 +63,7 @@ fun HomeScreen() {
 
         HomeHeader(
 
-            userName = "دوست من"
+            userName = userName
 
         )
 
@@ -82,6 +102,14 @@ fun HomeScreen() {
                 completedDays = currentUserHabit?.completedDays ?: 0,
 
                 targetDays = currentUserHabit?.targetDays ?: 21
+
+            )
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            MotivationCard(
+
+                text = viewModel.motivation.text
 
             )
 
