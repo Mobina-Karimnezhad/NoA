@@ -32,7 +32,7 @@ import androidx.compose.material3.TextButton
 import kotlinx.coroutines.launch
 import com.noa.app.ui.theme.PrimaryGreen
 import com.noa.app.ui.theme.Divider
-
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 private val onboardingPages = listOf(
@@ -68,6 +68,8 @@ fun OnboardingScreen(
 ) {
     val scope = rememberCoroutineScope()
 
+    val viewModel: OnboardingViewModel = viewModel()
+
     val pagerState = rememberPagerState(
         initialPage = 0,
         pageCount = { onboardingPages.size }
@@ -90,7 +92,17 @@ fun OnboardingScreen(
 
         ) {
             TextButton(
-                onClick = onSkip
+
+                onClick = {
+
+                    viewModel.completeOnboarding {
+
+                        onSkip()
+
+                    }
+
+                }
+
             ) {
                 Text("رد کردن")
             }
@@ -118,8 +130,15 @@ fun OnboardingScreen(
             isLastPage = pagerState.currentPage == onboardingPages.lastIndex,
             onClick = {
 
-                if (pagerState.currentPage == onboardingPages.lastIndex)
-                    onFinish()
+                if (pagerState.currentPage == onboardingPages.lastIndex) {
+
+                    viewModel.completeOnboarding {
+
+                        onFinish()
+
+                    }
+
+                }
                 else
                     scope.launch {
                         pagerState.animateScrollToPage(

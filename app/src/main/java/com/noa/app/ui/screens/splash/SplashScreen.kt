@@ -16,76 +16,127 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.noa.app.R
 import kotlinx.coroutines.delay
-import androidx.compose.ui.tooling.preview.Preview  //**************** new
-import com.noa.app.ui.theme.NoATheme    //***************** new
+import androidx.compose.ui.tooling.preview.Preview
+import com.noa.app.ui.theme.NoATheme
 
 @Composable
 fun SplashScreen(
-    onNavigate: () -> Unit
+
+    onNavigateToOnboarding: () -> Unit,
+
+    onNavigateToHome: () -> Unit,
+
+    viewModel: SplashViewModel = viewModel()
+
 ) {
 
     var showLogo by remember { mutableStateOf(false) }
+
     var showSubtitle by remember { mutableStateOf(false) }
+
+    val onboardingCompleted by viewModel.onboardingCompleted.collectAsState()
 
     LaunchedEffect(Unit) {
 
         delay(200)
+
         showLogo = true
 
         delay(900)
+
         showSubtitle = true
 
         delay(1200)
-        onNavigate()
+
+        if (onboardingCompleted)
+
+            onNavigateToHome()
+
+        else
+
+            onNavigateToOnboarding()
+
     }
 
     Surface(
+
         modifier = Modifier.fillMaxSize(),
+
         color = MaterialTheme.colorScheme.background
+
     ) {
 
         Column(
+
             modifier = Modifier.fillMaxSize(),
+
             horizontalAlignment = Alignment.CenterHorizontally,
+
             verticalArrangement = Arrangement.Center
+
         ) {
 
             AnimatedVisibility(
+
                 visible = showLogo,
+
                 enter =
+
                     fadeIn(
+
                         animationSpec = tween(700)
+
                     ) +
+
                             scaleIn(
+
                                 initialScale = 0.75f,
+
                                 animationSpec = tween(700)
+
                             )
+
             ) {
 
                 Image(
+
                     painter = painterResource(R.drawable.ic_noa_logo),
-                    contentDescription = "NoA Logo",
+
+                    contentDescription = null,
+
                     modifier = Modifier.size(240.dp)
+
                 )
+
             }
 
             AnimatedVisibility(
+
                 visible = showSubtitle,
+
                 enter = fadeIn(
+
                     animationSpec = tween(600)
+
                 )
+
             ) {
 
                 Text(
+
                     text = "هر روز، یک قدم بهتر",
+
                     modifier = Modifier.padding(top = 28.dp),
+
                     style = MaterialTheme.typography.bodyLarge,
+
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.65f)
+
                 )
 
             }
@@ -96,17 +147,18 @@ fun SplashScreen(
 
 }
 
-@Preview(
-    showBackground = true,
-    showSystemUi = true
-)
+@Preview(showBackground = true)
 @Composable
-fun SplashScreenPreview() {
+fun SplashPreview() {
 
     NoATheme {
 
         SplashScreen(
-            onNavigate = {}
+
+            onNavigateToOnboarding = {},
+
+            onNavigateToHome = {}
+
         )
 
     }

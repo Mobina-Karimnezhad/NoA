@@ -1,94 +1,105 @@
 package com.noa.app.ui.screens.home
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.noa.app.data.repository.HabitRepository
-import com.noa.app.data.repository.UserHabitRepository
+import com.noa.app.ui.components.CurrentHabitCard
+import com.noa.app.ui.components.HomeHeader
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.noa.app.ui.components.TodayActionButton
+import com.noa.app.ui.components.ProgressRing
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.Alignment
 
 @Composable
 fun HomeScreen() {
 
-    val userHabits = UserHabitRepository.getHabits()
+    val viewModel: HomeViewModel = viewModel()
 
-    val suggestedHabits = HabitRepository().getSuggestedHabits()
+    val firstHabit = viewModel.currentHabit
 
-    val firstHabit =
-        userHabits.firstOrNull()?.let { userHabit ->
+    val currentUserHabit = viewModel.currentUserHabit
 
-            suggestedHabits.firstOrNull {
+    val completedToday = viewModel.completedToday
 
-                it.id == userHabit.habitId
-
-            }
-
-        }
+    val showSuccess = viewModel.showSuccessMessage
 
     Column(
 
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 24.dp),
 
-        horizontalAlignment = Alignment.CenterHorizontally,
-
-        verticalArrangement = Arrangement.Center
+        horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
 
+        HomeHeader(
+
+            userName = "دوست من"
+
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
         if (firstHabit != null) {
 
-            Text(
+            CurrentHabitCard(
 
-                text = "سلام 🌱",
+                title = firstHabit.title,
 
-                style = MaterialTheme.typography.headlineMedium
+                imageRes = firstHabit.imageRes,
 
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Image(
-
-                painter = painterResource(firstHabit.imageRes),
-
-                contentDescription = null,
-
-                modifier = Modifier.size(180.dp)
+                streak = currentUserHabit?.currentStreak ?: 0
 
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-            Text(
+            TodayActionButton(
 
-                text = firstHabit.title,
+                completedToday = completedToday,
 
-                style = MaterialTheme.typography.headlineSmall,
+                onClick = {
 
-                textAlign = TextAlign.Center
+                    viewModel.completeToday()
+
+                }
+
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            ProgressRing(
+
+                completedDays = currentUserHabit?.completedDays ?: 0,
+
+                targetDays = currentUserHabit?.targetDays ?: 21
 
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-            Text(
+            if (showSuccess) {
 
-                text = "🔥 ۰ روز از هدف",
+                Text(
 
-                style = MaterialTheme.typography.bodyLarge
+                    text = "✨ آفرین!\nیک قدم دیگر به ساختن نسخه بهتر خودت نزدیک شدی.",
 
-            )
+                    style = MaterialTheme.typography.bodyLarge,
+
+                    textAlign = TextAlign.Center
+
+                )
+
+            }
 
         } else {
 

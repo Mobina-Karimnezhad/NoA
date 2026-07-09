@@ -18,6 +18,42 @@ object UserHabitRepository {
 
     }
 
+    fun getHabitById(habitId: Int): UserHabit? {
+
+        return habits.firstOrNull {
+
+            it.habitId == habitId
+
+        }
+
+    }
+
+    fun hasHabit(habitId: Int): Boolean {
+
+        return habits.any {
+
+            it.habitId == habitId
+
+        }
+
+    }
+
+    fun updateHabit(updatedHabit: UserHabit) {
+
+        val index = habits.indexOfFirst {
+
+            it.id == updatedHabit.id
+
+        }
+
+        if (index != -1) {
+
+            habits[index] = updatedHabit
+
+        }
+
+    }
+
     fun clear() {
 
         habits.clear()

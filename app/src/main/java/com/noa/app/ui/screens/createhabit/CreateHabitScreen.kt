@@ -28,6 +28,7 @@ import com.noa.app.ui.theme.NoATheme
 import com.noa.app.ui.theme.TextSecondary
 import com.noa.app.domain.model.Habit
 import com.noa.app.data.repository.UserHabitRepository
+import com.noa.app.domain.model.UserHabit
 
 @Composable
 fun CreateHabitScreen(
@@ -149,8 +150,20 @@ fun CreateHabitScreen(
 
                 UserHabitRepository.addHabit(
 
-                    viewModel.buildUserHabit(
-                        habit.id
+                    UserHabit(
+
+                        id = 1,
+
+                        habitId = habit.id,
+
+                        targetDays = days,
+
+                        selectedDays = emptyList(),
+
+                        currentStreak = 0,
+
+                        completedDays = 0
+
                     )
 
                 )

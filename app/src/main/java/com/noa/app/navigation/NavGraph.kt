@@ -22,15 +22,37 @@ fun NoANavGraph() {
 
         composable(Routes.Splash.route) {
 
-            SplashScreen {
+            SplashScreen(
 
-                navController.navigate(Routes.Onboarding.route) {
-                    popUpTo(Routes.Splash.route) {
-                        inclusive = true
+                onNavigateToOnboarding = {
+
+                    navController.navigate(Routes.Onboarding.route) {
+
+                        popUpTo(Routes.Splash.route) {
+
+                            inclusive = true
+
+                        }
+
                     }
+
+                },
+
+                onNavigateToHome = {
+
+                    navController.navigate(Routes.Home.route) {
+
+                        popUpTo(Routes.Splash.route) {
+
+                            inclusive = true
+
+                        }
+
+                    }
+
                 }
 
-            }
+            )
 
         }
 
