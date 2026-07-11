@@ -6,9 +6,13 @@ data class UserHabit(
 
     val habitId: Int,
 
+    val customTitle: String,
+
     val targetDays: Int,
 
     val selectedDays: List<WeekDay>,
+
+    val reminderTime: String,
 
     val currentStreak: Int = 0,
 

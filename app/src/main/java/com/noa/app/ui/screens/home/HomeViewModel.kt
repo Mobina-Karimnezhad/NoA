@@ -25,6 +25,19 @@ class HomeViewModel : ViewModel() {
     val suggestedHabits =
         habitRepository.getSuggestedHabits()
 
+    val habitCards: List<Pair<UserHabit, Habit>>
+        get() = userHabits.mapNotNull { userHabit ->
+
+            val habit = suggestedHabits.firstOrNull {
+                it.id == userHabit.habitId
+            }
+
+            if (habit != null)
+                userHabit to habit
+            else
+                null
+        }
+
     val currentHabit: Habit?
 
         get() {

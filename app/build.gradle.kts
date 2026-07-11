@@ -51,6 +51,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation("androidx.compose.material:material-icons-extended")
     implementation(libs.androidx.compose.foundation)
-    implementation("androidx.datastore:datastore-preferences:1.1.1")//**************************** new
-    implementation("androidx.datastore:datastore:1.1.1")//**************************** new
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("androidx.datastore:datastore:1.1.1")
 }

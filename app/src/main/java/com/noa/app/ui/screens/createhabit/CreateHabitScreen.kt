@@ -156,9 +156,13 @@ fun CreateHabitScreen(
 
                         habitId = habit.id,
 
+                        customTitle = habit.title,
+
                         targetDays = days,
 
                         selectedDays = emptyList(),
+
+                        reminderTime = "21:00",
 
                         currentStreak = 0,
 

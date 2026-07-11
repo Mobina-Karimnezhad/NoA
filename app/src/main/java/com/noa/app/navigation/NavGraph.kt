@@ -12,11 +12,7 @@ import com.noa.app.ui.screens.createhabit.CreateHabitScreen
 import com.noa.app.ui.screens.profile.WelcomeScreen
 import com.noa.app.ui.screens.celebration.FirstHabitCelebrationScreen
 import com.noa.app.data.repository.UserHabitRepository
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.launch
-import androidx.compose.runtime.rememberCoroutineScope
+import com.noa.app.ui.screens.addhabit.AddHabitScreen
 
 @Composable
 fun NoANavGraph() {
@@ -155,7 +151,59 @@ fun NoANavGraph() {
 
         composable(Routes.Home.route) {
 
-            HomeScreen()
+            HomeScreen(
+
+                onAddHabit = {
+
+                    navController.navigate(
+
+                        Routes.AddHabit.route
+
+                    )
+
+                }
+
+            )
+
+        }
+
+        composable(Routes.AddHabit.route) {
+
+            AddHabitScreen(
+
+                onSave = { habit, customTitle, targetDays, selectedDays, reminderTime ->
+
+                    UserHabitRepository.addHabit(
+
+                        com.noa.app.domain.model.UserHabit(
+
+                            id = System.currentTimeMillis().toInt(),
+
+                            habitId = habit.id,
+
+                            customTitle = customTitle,
+
+                            targetDays = targetDays,
+
+                            selectedDays = selectedDays,
+
+                            reminderTime = reminderTime
+
+                        )
+
+                    )
+
+                    navController.popBackStack()
+
+                },
+
+                onCancel = {
+
+                    navController.popBackStack()
+
+                }
+
+            )
 
         }
 

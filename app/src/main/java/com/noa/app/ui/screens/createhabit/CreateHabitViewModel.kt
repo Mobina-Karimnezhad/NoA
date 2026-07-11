@@ -50,9 +50,13 @@ class CreateHabitViewModel : ViewModel() {
 
             habitId = habitId,
 
+            customTitle = "",
+
             targetDays = days,
 
-            selectedDays = selectedDays
+            selectedDays = selectedDays,
+
+            reminderTime = "21:00"
 
         )
 

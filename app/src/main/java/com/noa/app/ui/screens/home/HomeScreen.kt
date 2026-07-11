@@ -1,31 +1,37 @@
 package com.noa.app.ui.screens.home
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.noa.app.ui.components.CurrentHabitCard
-import com.noa.app.ui.components.HomeHeader
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.noa.app.ui.components.TodayActionButton
-import com.noa.app.ui.components.ProgressRing
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.Alignment
-import com.noa.app.ui.components.MotivationCard
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.platform.LocalContext
-import com.noa.app.data.datastore.UserPreferencesRepository
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.noa.app.data.datastore.UserPreferencesRepository
+import com.noa.app.ui.components.HomeHabitCard
+import com.noa.app.ui.components.HomeHeader
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+
+    onAddHabit: () -> Unit = {}
+
+) {
 
     val viewModel: HomeViewModel = viewModel()
 
@@ -43,101 +49,99 @@ fun HomeScreen() {
 
     )
 
-    val firstHabit = viewModel.currentHabit
+    Scaffold(
 
-    val currentUserHabit = viewModel.currentUserHabit
+        floatingActionButton = {
 
-    val completedToday = viewModel.completedToday
+            FloatingActionButton(
 
-    val showSuccess = viewModel.showSuccessMessage
+                onClick = onAddHabit
 
-    Column(
+            ) {
 
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 24.dp),
+                Icon(
 
-        horizontalAlignment = Alignment.CenterHorizontally
+                    imageVector = Icons.Default.Add,
 
-    ) {
-
-        HomeHeader(
-
-            userName = userName
-
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        if (firstHabit != null) {
-
-            CurrentHabitCard(
-
-                title = firstHabit.title,
-
-                imageRes = firstHabit.imageRes,
-
-                streak = currentUserHabit?.currentStreak ?: 0
-
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            TodayActionButton(
-
-                completedToday = completedToday,
-
-                onClick = {
-
-                    viewModel.completeToday()
-
-                }
-
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            ProgressRing(
-
-                completedDays = currentUserHabit?.completedDays ?: 0,
-
-                targetDays = currentUserHabit?.targetDays ?: 21
-
-            )
-
-            Spacer(modifier = Modifier.height(28.dp))
-
-            MotivationCard(
-
-                text = viewModel.motivation.text
-
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            if (showSuccess) {
-
-                Text(
-
-                    text = "✨ آفرین!\nیک قدم دیگر به ساختن نسخه بهتر خودت نزدیک شدی.",
-
-                    style = MaterialTheme.typography.bodyLarge,
-
-                    textAlign = TextAlign.Center
+                    contentDescription = null
 
                 )
 
             }
 
-        } else {
+        }
 
-            Text(
+    ) { padding ->
 
-                text = "هنوز عادتی ایجاد نشده است.",
+        LazyColumn(
 
-                style = MaterialTheme.typography.bodyLarge
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 24.dp),
 
-            )
+            contentPadding = PaddingValues(
+
+                top = padding.calculateTopPadding() + 16.dp,
+
+                bottom = 96.dp
+
+            ),
+
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+
+        ) {
+
+            item {
+
+                HomeHeader(
+
+                    userName = userName
+
+                )
+
+                Spacer(
+
+                    modifier = Modifier.height(8.dp)
+
+                )
+
+            }
+
+            if (viewModel.habitCards.isEmpty()) {
+
+                item {
+
+                    Text(
+
+                        text = "هنوز عادتی ایجاد نشده است."
+
+                    )
+
+                }
+
+            }
+
+            items(
+
+                viewModel.habitCards
+
+            ) { (userHabit, habit) ->
+
+                HomeHabitCard(
+
+                    habit = habit,
+
+                    userHabit = userHabit,
+
+                    onClick = {
+
+                        // بعداً Habit Details
+
+                    }
+
+                )
+
+            }
 
         }
 
