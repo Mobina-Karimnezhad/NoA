@@ -8,10 +8,8 @@ import com.noa.app.ui.screens.home.HomeScreen
 import com.noa.app.ui.screens.onboarding.OnboardingScreen
 import com.noa.app.ui.screens.splash.SplashScreen
 import com.noa.app.ui.screens.choosehabit.ChooseFirstHabitScreen
-import com.noa.app.ui.screens.createhabit.CreateHabitScreen
 import com.noa.app.ui.screens.profile.WelcomeScreen
 import com.noa.app.ui.screens.celebration.FirstHabitCelebrationScreen
-import com.noa.app.data.repository.UserHabitRepository
 import com.noa.app.ui.screens.addhabit.AddHabitScreen
 
 @Composable
@@ -138,9 +136,7 @@ fun NoANavGraph() {
                 onContinue = { habit ->
 
                     navController.navigate(
-
-                        "create_habit/${habit.id}"
-
+                        Routes.AddHabit.createRoute(habit.id)
                     )
 
                 }
@@ -167,33 +163,37 @@ fun NoANavGraph() {
 
         }
 
-        composable(Routes.AddHabit.route) {
+        composable(Routes.AddHabit.route) { backStackEntry ->
+
+            val habitId = backStackEntry.arguments
+                ?.getString("habitId")
+                ?.toIntOrNull()
 
             AddHabitScreen(
 
-                onSave = { habit, customTitle, targetDays, selectedDays, reminderTime ->
+                initialHabitId = habitId,
 
-                    UserHabitRepository.addHabit(
+                onFinished = {
 
-                        com.noa.app.domain.model.UserHabit(
+                    if (habitId == null) {
 
-                            id = System.currentTimeMillis().toInt(),
+                        navController.popBackStack()
 
-                            habitId = habit.id,
+                    } else {
 
-                            customTitle = customTitle,
+                        navController.navigate(
+                            Routes.FirstHabitCelebration.route
+                        ) {
 
-                            targetDays = targetDays,
+                            popUpTo(
+                                Routes.ChooseFirstHabit.route
+                            ) {
+                                inclusive = true
+                            }
 
-                            selectedDays = selectedDays,
+                        }
 
-                            reminderTime = reminderTime
-
-                        )
-
-                    )
-
-                    navController.popBackStack()
+                    }
 
                 },
 
@@ -207,57 +207,6 @@ fun NoANavGraph() {
 
         }
 
-        composable(route = Routes.CreateHabit.route) {
-            backStackEntry ->
-
-            val habitId =
-                backStackEntry.arguments
-                    ?.getString("habitId")
-                    ?.toIntOrNull()
-                    ?: 1
-
-            val repository = com.noa.app.data.repository.HabitRepository()
-
-            val habit =
-                repository
-                    .getSuggestedHabits()
-                    .first { it.id == habitId }
-
-            CreateHabitScreen(
-
-                habit = habit,
-
-                onSave = { userHabit ->
-
-                    UserHabitRepository.addHabit(
-
-                        userHabit
-
-                    )
-
-                    navController.navigate(
-
-                        Routes.FirstHabitCelebration.route
-
-                    ) {
-
-                        popUpTo(
-
-                            Routes.CreateHabit.route
-
-                        ) {
-
-                            inclusive = true
-
-                        }
-
-                    }
-
-                }
-
-            )
-
-        }
 
         composable(Routes.FirstHabitCelebration.route) {
 

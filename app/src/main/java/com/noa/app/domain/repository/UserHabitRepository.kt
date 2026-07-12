@@ -1,63 +1,19 @@
-package com.noa.app.data.repository
+package com.noa.app.domain.repository
 
 import com.noa.app.domain.model.UserHabit
+import kotlinx.coroutines.flow.Flow
 
-object UserHabitRepository {
+interface UserHabitRepository {
 
-    private val habits = mutableListOf<UserHabit>()
+    fun getAllHabits(): Flow<List<UserHabit>>
 
-    fun addHabit(habit: UserHabit) {
+    suspend fun getHabit(id: Int): UserHabit?
 
-        habits.add(habit)
+    suspend fun insertHabit(habit: UserHabit)
 
-    }
+    suspend fun updateHabit(habit: UserHabit)
 
-    fun getHabits(): List<UserHabit> {
+    suspend fun deleteHabit(habit: UserHabit)
 
-        return habits
-
-    }
-
-    fun getHabitById(habitId: Int): UserHabit? {
-
-        return habits.firstOrNull {
-
-            it.habitId == habitId
-
-        }
-
-    }
-
-    fun hasHabit(habitId: Int): Boolean {
-
-        return habits.any {
-
-            it.habitId == habitId
-
-        }
-
-    }
-
-    fun updateHabit(updatedHabit: UserHabit) {
-
-        val index = habits.indexOfFirst {
-
-            it.id == updatedHabit.id
-
-        }
-
-        if (index != -1) {
-
-            habits[index] = updatedHabit
-
-        }
-
-    }
-
-    fun clear() {
-
-        habits.clear()
-
-    }
-
+    suspend fun deleteAll()
 }

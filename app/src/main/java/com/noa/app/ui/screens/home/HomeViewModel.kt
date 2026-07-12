@@ -5,22 +5,44 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.noa.app.data.repository.HabitRepository
-import com.noa.app.data.repository.UserHabitRepository
 import com.noa.app.domain.model.Habit
 import com.noa.app.domain.model.UserHabit
 import com.noa.app.data.repository.MotivationRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import com.noa.app.domain.repository.UserHabitRepository
 
 
-class HomeViewModel : ViewModel() {
+@HiltViewModel
+class HomeViewModel @Inject constructor(
 
-    private val userRepository = UserHabitRepository
+    private val userRepository: UserHabitRepository
+
+) : ViewModel() {
 
     private val habitRepository = HabitRepository()
 
-    var userHabits by mutableStateOf(
-        userRepository.getHabits()
-    )
+    var userHabits by mutableStateOf<List<UserHabit>>(emptyList())
         private set
+
+    init {
+
+        viewModelScope.launch {
+
+            userRepository
+                .getAllHabits()
+                .collect {
+
+                    userHabits = it
+
+                }
+
+        }
+
+    }
 
     val suggestedHabits =
         habitRepository.getSuggestedHabits()
@@ -80,9 +102,11 @@ class HomeViewModel : ViewModel() {
 
         )
 
-        userRepository.updateHabit(updatedHabit)
+        viewModelScope.launch {
 
-        userHabits = userRepository.getHabits()
+            userRepository.updateHabit(updatedHabit)
+
+        }
 
         completedToday = true
 

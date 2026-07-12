@@ -10,7 +10,16 @@ sealed class Routes(val route: String) {
 
     data object Home : Routes("home")
 
-    data object AddHabit : Routes("add_habit")
+    data object AddHabit : Routes("add_habit?habitId={habitId}")
+
+    fun createRoute(habitId: Int? = null): String {
+
+        return if (habitId == null)
+            "add_habit"
+        else
+            "add_habit?habitId=$habitId"
+
+    }
 
     data object HabitDetails : Routes("habit_details")
 
@@ -21,8 +30,6 @@ sealed class Routes(val route: String) {
     data object Settings : Routes("settings")
 
     data object ChooseFirstHabit : Routes("choose_first_habit")
-
-    data object CreateHabit : Routes("create_habit/{habitId}")
 
     data object FirstHabitCelebration : Routes("first_habit_celebration")
 

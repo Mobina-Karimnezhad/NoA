@@ -40,33 +40,43 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.noa.app.domain.model.UserHabit
 
 @Composable
 fun AddHabitScreen(
 
-    onSave: (
-        habit: Habit,
-        customTitle: String,
-        targetDays: Int,
-        selectedDays: List<WeekDay>,
-        reminderTime: String
-    ) -> Unit,
+    initialHabitId: Int? = null,
 
-    onCancel: () -> Unit
+    onFinished: () -> Unit,
+
+    onCancel: () -> Unit,
+
+    viewModel: AddHabitViewModel = hiltViewModel()
 
 ) {
 
     val habits = HabitRepository().getSuggestedHabits()
 
+    val initialHabit = remember(initialHabitId) {
+
+        habits.firstOrNull {
+
+            it.id == initialHabitId
+
+        }
+
+    }
+
     var selectedHabit by remember {
 
-        mutableStateOf<Habit?>(null)
+        mutableStateOf(initialHabit)
 
     }
 
     var customTitle by remember {
 
-        mutableStateOf("")
+        mutableStateOf(initialHabit?.title ?: "")
 
     }
 
@@ -154,11 +164,24 @@ fun AddHabitScreen(
 
                     modifier = Modifier
                         .width(90.dp)
-                        .clickable {
+                        .then(
 
-                            selectedHabit = habit
+                            if (initialHabitId == null) {
 
-                        }
+                                Modifier.clickable {
+
+                                    selectedHabit = habit
+                                    customTitle = habit.title
+
+                                }
+
+                            } else {
+
+                                Modifier
+
+                            }
+
+                        )
 
                 ) {
 
@@ -368,19 +391,33 @@ fun AddHabitScreen(
 
             onClick = {
 
-                onSave(
+                viewModel.saveHabit(
 
-                    selectedHabit!!,
+                    UserHabit(
 
-                    customTitle.trim(),
+                        id = 0,
 
-                    targetDays,
+                        habitId = selectedHabit!!.id,
 
-                    selectedDays,
+                        customTitle = customTitle.trim(),
 
-                    reminderTime
+                        targetDays = targetDays,
 
-                )
+                        selectedDays = selectedDays,
+
+                        reminderTime = reminderTime,
+
+                        currentStreak = 0,
+
+                        completedDays = 0
+
+                    )
+
+                ) {
+
+                    onFinished()
+
+                }
 
             }
 
@@ -396,7 +433,7 @@ fun AddHabitScreen(
 
 }
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun AddHabitScreenPreview() {
 
@@ -408,4 +445,4 @@ fun AddHabitScreenPreview() {
 
     )
 
-}
+}*/

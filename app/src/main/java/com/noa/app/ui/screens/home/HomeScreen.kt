@@ -21,11 +21,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.noa.app.data.datastore.UserPreferencesRepository
 import com.noa.app.ui.components.HomeHabitCard
 import com.noa.app.ui.components.HomeHeader
-
 @Composable
 fun HomeScreen(
 
@@ -33,7 +32,7 @@ fun HomeScreen(
 
 ) {
 
-    val viewModel: HomeViewModel = viewModel()
+    val viewModel: HomeViewModel = hiltViewModel()
 
     val context = LocalContext.current
 
