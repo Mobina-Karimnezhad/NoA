@@ -4,14 +4,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.noa.app.data.repository.HabitRepository
+import com.noa.app.data.datasource.DefaultHabitDataSource
 import com.noa.app.domain.model.Habit
 import com.noa.app.domain.model.UserHabit
 import com.noa.app.data.repository.MotivationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import com.noa.app.domain.repository.UserHabitRepository
 
@@ -19,11 +18,10 @@ import com.noa.app.domain.repository.UserHabitRepository
 @HiltViewModel
 class HomeViewModel @Inject constructor(
 
-    private val userRepository: UserHabitRepository
+    private val userRepository: UserHabitRepository,
+    private val habitDataSource: DefaultHabitDataSource
 
 ) : ViewModel() {
-
-    private val habitRepository = HabitRepository()
 
     var userHabits by mutableStateOf<List<UserHabit>>(emptyList())
         private set
@@ -45,7 +43,7 @@ class HomeViewModel @Inject constructor(
     }
 
     val suggestedHabits =
-        habitRepository.getSuggestedHabits()
+        habitDataSource.getAll()
 
     val habitCards: List<Pair<UserHabit, Habit>>
         get() = userHabits.mapNotNull { userHabit ->

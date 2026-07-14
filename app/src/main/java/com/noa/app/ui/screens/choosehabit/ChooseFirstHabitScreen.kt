@@ -31,6 +31,7 @@ import com.noa.app.ui.theme.NoATheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import com.noa.app.ui.theme.CardBackground
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun ChooseFirstHabitScreen(
@@ -39,7 +40,7 @@ fun ChooseFirstHabitScreen(
 
     onContinue: (Habit) -> Unit,
 
-    viewModel: ChooseFirstHabitViewModel = viewModel()
+    viewModel: ChooseFirstHabitViewModel = hiltViewModel()
 
 ) {
 

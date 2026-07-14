@@ -22,26 +22,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.ui.graphics.Color
-import com.noa.app.data.repository.HabitRepository
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
-import com.noa.app.domain.model.Habit
 import com.noa.app.ui.theme.PrimaryGreen
 import com.noa.app.ui.components.NumberStepper
-import com.noa.app.domain.model.WeekDay
 import com.noa.app.ui.components.WeekDaySelector
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.noa.app.domain.model.UserHabit
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun AddHabitScreen(
@@ -56,52 +46,20 @@ fun AddHabitScreen(
 
 ) {
 
-    val habits = HabitRepository().getSuggestedHabits()
 
-    val initialHabit = remember(initialHabitId) {
+    LaunchedEffect(initialHabitId) {
 
-        habits.firstOrNull {
+        if (initialHabitId != null &&
+            viewModel.selectedHabit == null
+        ) {
 
-            it.id == initialHabitId
+            viewModel.habits.firstOrNull {
+                it.id == initialHabitId
+            }?.let(viewModel::selectHabit)
 
         }
 
     }
-
-    var selectedHabit by remember {
-
-        mutableStateOf(initialHabit)
-
-    }
-
-    var customTitle by remember {
-
-        mutableStateOf(initialHabit?.title ?: "")
-
-    }
-
-    var targetDays by remember {
-
-        mutableStateOf(21)
-
-    }
-
-    var reminderTime by remember {
-
-        mutableStateOf("21:00")
-
-    }
-
-    var selectedDays by remember {
-
-        mutableStateOf(
-
-            WeekDay.entries.toList()
-
-        )
-
-    }
-
 
 
     Column(
@@ -156,7 +114,7 @@ fun AddHabitScreen(
 
         ) {
 
-            items(habits) { habit ->
+            items(viewModel.habits) { habit ->
 
                 Column(
 
@@ -170,8 +128,7 @@ fun AddHabitScreen(
 
                                 Modifier.clickable {
 
-                                    selectedHabit = habit
-                                    customTitle = habit.title
+                                    viewModel.selectHabit(habit)
 
                                 }
 
@@ -194,7 +151,7 @@ fun AddHabitScreen(
                         modifier = Modifier
                             .size(64.dp)
                             .border(
-                                width = if (selectedHabit?.id == habit.id) 2.dp else 0.dp,
+                                width = if (viewModel.selectedHabit?.id == habit.id) 2.dp else 0.dp,
                                 color = PrimaryGreen,
                                 shape = RoundedCornerShape(16.dp)
                             )
@@ -223,12 +180,10 @@ fun AddHabitScreen(
 
             modifier = Modifier.fillMaxWidth(),
 
-            value = customTitle,
+            value = viewModel.customTitle,
 
             onValueChange = {
-
-                customTitle = it
-
+                viewModel.updateTitle(it)
             },
 
             label = {
@@ -261,19 +216,17 @@ fun AddHabitScreen(
 
         NumberStepper(
 
-            value = targetDays,
+            value = viewModel.targetDays,
 
             onIncrease = {
 
-                targetDays++
+                viewModel.increaseTargetDays()
 
             },
 
             onDecrease = {
 
-                if (targetDays > 1)
-
-                    targetDays--
+                viewModel.decreaseTargetDays()
 
             }
 
@@ -293,19 +246,11 @@ fun AddHabitScreen(
 
         WeekDaySelector(
 
-            selectedDays = selectedDays,
+            selectedDays = viewModel.selectedDays,
 
-            onDayClick = { day ->
+            onDayClick = {
 
-                selectedDays =
-
-                    if (day in selectedDays)
-
-                        selectedDays - day
-
-                    else
-
-                        selectedDays + day
+                viewModel.toggleDay(it)
 
             }
 
@@ -325,7 +270,7 @@ fun AddHabitScreen(
 
         Text(
 
-            text = reminderTime,
+            text = viewModel.reminderTime,
 
             style = MaterialTheme.typography.headlineSmall
 
@@ -354,7 +299,7 @@ fun AddHabitScreen(
             text = "حداقل ۲۱ روز برای ساخت عادت پیشنهاد می‌شود.",
 
             color =
-                if (targetDays >= 21)
+                if (viewModel.targetDays >= 21)
                     MaterialTheme.colorScheme.onSurfaceVariant
                 else
                     MaterialTheme.colorScheme.error,
@@ -384,36 +329,14 @@ fun AddHabitScreen(
             modifier = Modifier.fillMaxWidth(),
 
             enabled =
-                selectedHabit != null &&
-                        customTitle.isNotBlank() &&
-                        targetDays >= 21 &&
-                        selectedDays.isNotEmpty(),
+                viewModel.selectedHabit != null &&
+                        viewModel.customTitle.isNotBlank() &&
+                        viewModel.targetDays >= 21 &&
+                        viewModel.selectedDays.isNotEmpty(),
 
             onClick = {
 
-                viewModel.saveHabit(
-
-                    UserHabit(
-
-                        id = 0,
-
-                        habitId = selectedHabit!!.id,
-
-                        customTitle = customTitle.trim(),
-
-                        targetDays = targetDays,
-
-                        selectedDays = selectedDays,
-
-                        reminderTime = reminderTime,
-
-                        currentStreak = 0,
-
-                        completedDays = 0
-
-                    )
-
-                ) {
+                viewModel.saveHabit {
 
                     onFinished()
 
@@ -432,17 +355,3 @@ fun AddHabitScreen(
     }
 
 }
-
-/*@Preview(showBackground = true)
-@Composable
-fun AddHabitScreenPreview() {
-
-    AddHabitScreen(
-
-        onSave = { _, _, _, _, _ -> },
-
-        onCancel = {}
-
-    )
-
-}*/
