@@ -42,18 +42,20 @@ fun AddHabitScreen(
 
     onCancel: () -> Unit,
 
-    viewModel: AddHabitViewModel = hiltViewModel()
+    viewModel: AddHabitViewModel = hiltViewModel(),
 
 ) {
+
+    val uiState = viewModel.uiState
 
 
     LaunchedEffect(initialHabitId) {
 
         if (initialHabitId != null &&
-            viewModel.selectedHabit == null
+            uiState.selectedHabit == null
         ) {
 
-            viewModel.habits.firstOrNull {
+            uiState.habits.firstOrNull {
                 it.id == initialHabitId
             }?.let(viewModel::selectHabit)
 
@@ -151,7 +153,7 @@ fun AddHabitScreen(
                         modifier = Modifier
                             .size(64.dp)
                             .border(
-                                width = if (viewModel.selectedHabit?.id == habit.id) 2.dp else 0.dp,
+                                width = if (uiState.selectedHabit?.id == habit.id) 2.dp else 0.dp,
                                 color = PrimaryGreen,
                                 shape = RoundedCornerShape(16.dp)
                             )
@@ -180,7 +182,7 @@ fun AddHabitScreen(
 
             modifier = Modifier.fillMaxWidth(),
 
-            value = viewModel.customTitle,
+            value = uiState.customTitle,
 
             onValueChange = {
                 viewModel.updateTitle(it)
@@ -216,7 +218,7 @@ fun AddHabitScreen(
 
         NumberStepper(
 
-            value = viewModel.targetDays,
+            value = uiState.targetDays,
 
             onIncrease = {
 
@@ -246,7 +248,7 @@ fun AddHabitScreen(
 
         WeekDaySelector(
 
-            selectedDays = viewModel.selectedDays,
+            selectedDays = uiState.selectedDays,
 
             onDayClick = {
 
@@ -270,7 +272,7 @@ fun AddHabitScreen(
 
         Text(
 
-            text = viewModel.reminderTime,
+            text = uiState.reminderTime,
 
             style = MaterialTheme.typography.headlineSmall
 
@@ -299,7 +301,7 @@ fun AddHabitScreen(
             text = "حداقل ۲۱ روز برای ساخت عادت پیشنهاد می‌شود.",
 
             color =
-                if (viewModel.targetDays >= 21)
+                if (uiState.targetDays >= 21)
                     MaterialTheme.colorScheme.onSurfaceVariant
                 else
                     MaterialTheme.colorScheme.error,
@@ -329,10 +331,10 @@ fun AddHabitScreen(
             modifier = Modifier.fillMaxWidth(),
 
             enabled =
-                viewModel.selectedHabit != null &&
-                        viewModel.customTitle.isNotBlank() &&
-                        viewModel.targetDays >= 21 &&
-                        viewModel.selectedDays.isNotEmpty(),
+                uiState.selectedHabit != null &&
+                        uiState.customTitle.isNotBlank() &&
+                        uiState.targetDays >= 21 &&
+                        uiState.selectedDays.isNotEmpty(),
 
             onClick = {
 

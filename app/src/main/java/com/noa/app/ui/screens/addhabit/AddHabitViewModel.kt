@@ -25,70 +25,75 @@ class AddHabitViewModel @Inject constructor(
 
     val habits = habitDataSource.getAll()
 
-    var selectedHabit by mutableStateOf<Habit?>(null)
-        private set
-
-    var customTitle by mutableStateOf("")
-        private set
-
-    var targetDays by mutableIntStateOf(21)
-        private set
-
-    var reminderTime by mutableStateOf("21:00")
-        private set
-
-    var selectedDays by mutableStateOf(
-        WeekDay.entries.toList()
+    var uiState by mutableStateOf(
+        AddHabitUiState(
+            habits = habitDataSource.getAll()
+        )
     )
         private set
 
     fun selectHabit(habit: Habit) {
 
-        selectedHabit = habit
-
-        customTitle = habit.title
+        uiState = uiState.copy(
+            selectedHabit = habit,
+            customTitle = habit.title
+        )
 
     }
 
     fun updateTitle(value: String) {
 
-        customTitle = value
+        uiState = uiState.copy(
+            customTitle = value
+        )
 
     }
 
     fun increaseTargetDays() {
 
-        targetDays++
+        uiState = uiState.copy(
+            targetDays = uiState.targetDays + 1
+        )
 
     }
 
     fun decreaseTargetDays() {
 
-        if (targetDays > 1)
+        if (uiState.targetDays > 1) {
 
-            targetDays--
+            uiState = uiState.copy(
+                targetDays = uiState.targetDays - 1
+            )
+
+        }
 
     }
 
     fun toggleDay(day: WeekDay) {
 
-        selectedDays =
-            if (day in selectedDays)
-                selectedDays - day
+        val days =
+            if (day in uiState.selectedDays)
+                uiState.selectedDays - day
             else
-                selectedDays + day
+                uiState.selectedDays + day
+
+        uiState = uiState.copy(
+            selectedDays = days
+        )
 
     }
 
     fun updateReminderTime(time: String) {
 
-        reminderTime = time
+        uiState = uiState.copy(
+            reminderTime = time
+        )
 
     }
 
     fun buildHabit(): UserHabit {
 
-        val habit = selectedHabit
+        val habit = uiState.selectedHabit
             ?: error("Habit must be selected before saving")
 
         return UserHabit(
@@ -97,13 +102,13 @@ class AddHabitViewModel @Inject constructor(
 
             habitId = habit.id,
 
-            customTitle = customTitle.trim(),
+            customTitle = uiState.customTitle.trim(),
 
-            targetDays = targetDays,
+            targetDays = uiState.targetDays,
 
-            selectedDays = selectedDays,
+            selectedDays = uiState.selectedDays,
 
-            reminderTime = reminderTime,
+            reminderTime = uiState.reminderTime,
 
             currentStreak = 0,
 
@@ -131,11 +136,14 @@ class AddHabitViewModel @Inject constructor(
 
     fun setInitialHabit(habitId: Int?) {
 
-        if (habitId == null || selectedHabit != null) return
+        if (habitId == null || uiState.selectedHabit != null)
+            return
 
-        habits.firstOrNull { it.id == habitId }?.let {
-            selectHabit(it)
-        }
+        uiState.habits
+            .firstOrNull { it.id == habitId }
+            ?.let {
+                selectHabit(it)
+            }
 
     }
 
