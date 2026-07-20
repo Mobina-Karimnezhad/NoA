@@ -16,6 +16,12 @@ data class UserHabit(
 
     val currentStreak: Int = 0,
 
-    val completedDays: Int = 0
+    val lastCompletedDate: String? = null,
+
+    val completedToday: Boolean = false,
+
+    val isCompleted: Boolean = false,
+
+    val createdAt: Long = System.currentTimeMillis()
 
 )

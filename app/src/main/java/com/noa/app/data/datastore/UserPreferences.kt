@@ -17,4 +17,7 @@ object UserPreferences {
     val USER_NAME =
         stringPreferencesKey("user_name")
 
+    val LAST_APP_OPEN_DATE =
+        stringPreferencesKey("last_app_open_date")
+
 }

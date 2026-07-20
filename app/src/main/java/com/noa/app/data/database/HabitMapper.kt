@@ -5,27 +5,59 @@ import com.noa.app.domain.model.UserHabit
 fun UserHabitEntity.toDomain(): UserHabit {
 
     return UserHabit(
+
         id = id,
+
         habitId = habitId,
+
         customTitle = customTitle,
+
         targetDays = targetDays,
+
         selectedDays = selectedDays,
+
         reminderTime = reminderTime,
+
         currentStreak = currentStreak,
-        completedDays = completedDays
+
+        lastCompletedDate = lastCompletedDate,
+
+        completedToday = completedToday,
+
+        isCompleted = isCompleted,
+
+        createdAt = createdAt
+
     )
+
 }
 
 fun UserHabit.toEntity(): UserHabitEntity {
 
     return UserHabitEntity(
+
         id = id,
+
         habitId = habitId,
+
         customTitle = customTitle,
+
         targetDays = targetDays,
+
         selectedDays = selectedDays,
+
         reminderTime = reminderTime,
+
         currentStreak = currentStreak,
-        completedDays = completedDays
+
+        lastCompletedDate = lastCompletedDate,
+
+        completedToday = completedToday,
+
+        isCompleted = isCompleted,
+
+        createdAt = createdAt
+
     )
+
 }

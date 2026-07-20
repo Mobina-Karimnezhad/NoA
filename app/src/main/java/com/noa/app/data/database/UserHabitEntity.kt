@@ -22,6 +22,11 @@ data class UserHabitEntity(
 
     val currentStreak: Int,
 
-    val completedDays: Int
+    val lastCompletedDate: String?,
 
+    val completedToday: Boolean,
+
+    val isCompleted: Boolean,
+
+    val createdAt: Long
 )

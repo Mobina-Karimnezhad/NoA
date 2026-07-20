@@ -112,7 +112,11 @@ class AddHabitViewModel @Inject constructor(
 
             currentStreak = 0,
 
-            completedDays = 0
+            lastCompletedDate = null,
+
+            completedToday = false,
+
+            isCompleted = false
 
         )
 

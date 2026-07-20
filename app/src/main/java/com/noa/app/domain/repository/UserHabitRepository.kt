@@ -9,6 +9,10 @@ interface UserHabitRepository {
 
     suspend fun getHabit(id: Int): UserHabit?
 
+    fun getHabitById(id: Int): Flow<UserHabit?>
+
+    fun getHabitByHabitId(habitId: Int): Flow<UserHabit?>
+
     suspend fun insertHabit(habit: UserHabit)
 
     suspend fun updateHabit(habit: UserHabit)
@@ -16,4 +20,8 @@ interface UserHabitRepository {
     suspend fun deleteHabit(habit: UserHabit)
 
     suspend fun deleteAll()
+
+    suspend fun resetCompletedTodayFlags()
+
+    suspend fun getAllHabitsList(): List<UserHabit>
 }

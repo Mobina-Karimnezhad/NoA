@@ -62,4 +62,26 @@ class UserPreferencesRepository(
 
     }
 
+    val lastAppOpenDate: Flow<String?> =
+
+        context.dataStore.data.map {
+
+            it[UserPreferences.LAST_APP_OPEN_DATE]
+
+        }
+
+    suspend fun saveLastAppOpenDate(
+
+        date: String
+
+    ) {
+
+        context.dataStore.edit {
+
+            it[UserPreferences.LAST_APP_OPEN_DATE] = date
+
+        }
+
+    }
+
 }

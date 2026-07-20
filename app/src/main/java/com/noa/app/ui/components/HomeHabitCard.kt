@@ -35,7 +35,7 @@ fun HomeHabitCard(
 ) {
 
     val progress =
-        userHabit.completedDays.toFloat() /
+        userHabit.currentStreak.toFloat() /
                 userHabit.targetDays.toFloat()
 
     Card(
@@ -128,7 +128,7 @@ fun HomeHabitCard(
 
             Text(
 
-                text = "${userHabit.completedDays} / ${userHabit.targetDays} روز",
+                text = "${userHabit.currentStreak} / ${userHabit.targetDays} روز",
 
                 style = MaterialTheme.typography.bodySmall
 

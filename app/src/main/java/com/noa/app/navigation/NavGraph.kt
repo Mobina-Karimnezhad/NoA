@@ -11,6 +11,7 @@ import com.noa.app.ui.screens.choosehabit.ChooseFirstHabitScreen
 import com.noa.app.ui.screens.profile.WelcomeScreen
 import com.noa.app.ui.screens.celebration.FirstHabitCelebrationScreen
 import com.noa.app.ui.screens.addhabit.AddHabitScreen
+import com.noa.app.ui.screens.habitdetail.HabitDetailScreen
 
 @Composable
 fun NoANavGraph() {
@@ -152,10 +153,50 @@ fun NoANavGraph() {
                 onAddHabit = {
 
                     navController.navigate(
-
                         Routes.AddHabit.route
-
                     )
+
+                },
+
+                onHabitClick = { id ->
+
+                    navController.navigate(
+                        Routes.HabitDetails.createRoute(id)
+                    )
+
+                }
+
+            )
+
+        }
+
+        composable(
+            Routes.HabitDetails.route
+        ) { backStackEntry ->
+
+            val habitId =
+                backStackEntry.arguments
+                    ?.getString("habitId")
+                    ?.toIntOrNull()
+                    ?: return@composable
+
+            HabitDetailScreen(
+
+                onBack = {
+
+                    navController.popBackStack()
+
+                },
+
+                onEdit = {
+
+                    // نسخه بعد
+
+                },
+
+                onDelete = {
+
+                    // نسخه بعد
 
                 }
 

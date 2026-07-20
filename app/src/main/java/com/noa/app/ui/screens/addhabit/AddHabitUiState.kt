@@ -16,6 +16,12 @@ data class AddHabitUiState(
     val reminderTime: String = "21:00",
 
     val selectedDays: List<WeekDay> =
-        WeekDay.entries.toList()
+        WeekDay.entries.toList(),
+
+    val isCompleted: Boolean = false,
+
+    val createdAt: Long = System.currentTimeMillis(),
+
+    val completedAt: Long? = null
 
 )

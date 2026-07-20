@@ -25,14 +25,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.noa.app.data.datastore.UserPreferencesRepository
 import com.noa.app.ui.components.HomeHabitCard
 import com.noa.app.ui.components.HomeHeader
+import com.noa.app.ui.main.MainViewModel
 @Composable
 fun HomeScreen(
 
-    onAddHabit: () -> Unit = {}
+    onAddHabit: () -> Unit = {},
+
+    onHabitClick: (Int) -> Unit
 
 ) {
 
     val viewModel: HomeViewModel = hiltViewModel()
+
+    val mainViewModel: MainViewModel = hiltViewModel()
 
     val context = LocalContext.current
 
@@ -134,7 +139,7 @@ fun HomeScreen(
 
                     onClick = {
 
-                        // بعداً Habit Details
+                        onHabitClick(userHabit.id)
 
                     }
 

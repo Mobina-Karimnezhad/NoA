@@ -9,6 +9,8 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import com.noa.app.navigation.NoANavGraph
 import com.noa.app.ui.theme.NoATheme
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.noa.app.ui.main.MainViewModel
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -18,10 +20,10 @@ class MainActivity : ComponentActivity() {
 
         setContent {
 
+            val mainViewModel: MainViewModel = hiltViewModel()
+
             CompositionLocalProvider(
-
                 LocalLayoutDirection provides LayoutDirection.Rtl
-
             ) {
 
                 NoATheme {

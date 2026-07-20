@@ -22,19 +22,55 @@ class HabitRepositoryImpl(
         return dao.getHabit(id)?.toDomain()
     }
 
-    override suspend fun insertHabit(userHabit: UserHabit) {
-        dao.insertHabit(userHabit.toEntity())
+    override fun getHabitById(id: Int): Flow<UserHabit?> {
+
+        return dao.observeHabitById(id).map {
+
+            it?.toDomain()
+
+        }
+
     }
 
-    override suspend fun updateHabit(userHabit: UserHabit) {
-        dao.updateHabit(userHabit.toEntity())
+    override fun getHabitByHabitId(habitId: Int): Flow<UserHabit?> {
+
+        return dao.observeHabitByHabitId(habitId).map {
+
+            it?.toDomain()
+
+        }
+
     }
 
-    override suspend fun deleteHabit(userHabit: UserHabit) {
-        dao.deleteHabit(userHabit.toEntity())
+    override suspend fun insertHabit(habit: UserHabit) {
+        dao.insertHabit(habit.toEntity())
+    }
+
+    override suspend fun updateHabit(habit: UserHabit) {
+        dao.updateHabit(habit.toEntity())
+    }
+
+    override suspend fun deleteHabit(habit: UserHabit) {
+        dao.deleteHabit(habit.toEntity())
     }
 
     override suspend fun deleteAll() {
         dao.deleteAll()
+    }
+
+    override suspend fun resetCompletedTodayFlags() {
+
+        dao.resetCompletedTodayFlags()
+
+    }
+
+    override suspend fun getAllHabitsList(): List<UserHabit> {
+
+        return dao.getAllHabitsList().map {
+
+            it.toDomain()
+
+        }
+
     }
 }

@@ -94,8 +94,6 @@ class HomeViewModel @Inject constructor(
 
         val updatedHabit = firstHabit.copy(
 
-            completedDays = firstHabit.completedDays + 1,
-
             currentStreak = firstHabit.currentStreak + 1
 
         )

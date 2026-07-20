@@ -12,6 +12,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import com.noa.app.data.datastore.UserPreferencesRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -48,5 +49,15 @@ object DatabaseModule {
     ): UserHabitRepository {
 
         return HabitRepositoryImpl(dao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserPreferencesRepository(
+        @ApplicationContext context: Context
+    ): UserPreferencesRepository {
+
+        return UserPreferencesRepository(context)
+
     }
 }
