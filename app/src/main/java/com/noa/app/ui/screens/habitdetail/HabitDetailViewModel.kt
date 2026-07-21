@@ -82,8 +82,6 @@ class HabitDetailViewModel @Inject constructor(
                                 isTodaySelected(it.selectedDays)
                             } ?: false
 
-
-
                     )
 
                 }
@@ -150,6 +148,56 @@ class HabitDetailViewModel @Inject constructor(
 
     }
 
+    // -------------------------
+    // Delete Habit
+    // -------------------------
+
+    fun showDeleteDialog() {
+
+        uiState = uiState.copy(
+
+            showDeleteDialog = true
+
+        )
+
+    }
+
+    fun dismissDeleteDialog() {
+
+        uiState = uiState.copy(
+
+            showDeleteDialog = false
+
+        )
+
+    }
+
+    fun deleteHabit(
+
+        onDeleted: () -> Unit
+
+    ) {
+
+        val currentHabit =
+            uiState.userHabit
+                ?: return
+
+        viewModelScope.launch {
+
+            repository.deleteHabit(currentHabit)
+
+            uiState = uiState.copy(
+
+                showDeleteDialog = false
+
+            )
+
+            onDeleted()
+
+        }
+
+    }
+
     private fun isTodaySelected(
         selectedDays: List<WeekDay>
     ): Boolean {
@@ -165,9 +213,11 @@ class HabitDetailViewModel @Inject constructor(
             Calendar.WEDNESDAY -> WeekDay.WED
             Calendar.THURSDAY -> WeekDay.THU
             else -> WeekDay.FRI
+
         }
 
         return today in selectedDays
+
     }
 
 }

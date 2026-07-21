@@ -29,6 +29,14 @@ sealed class Routes(val route: String) {
 
     }
 
+    data object EditHabit : Routes("edit_habit/{habitId}") {
+
+        fun createRoute(habitId: Int): String {
+            return "edit_habit/$habitId"
+        }
+
+    }
+
     data object AI : Routes("ai")
 
     data object Statistics : Routes("statistics")

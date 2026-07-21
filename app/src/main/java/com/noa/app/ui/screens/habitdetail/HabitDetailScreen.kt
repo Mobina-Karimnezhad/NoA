@@ -32,6 +32,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,11 +87,15 @@ fun HabitDetailScreen(
 
                     }
 
-                    IconButton(onClick = onDelete) {
+                    IconButton(
+                        onClick = {
+                            viewModel.showDeleteDialog()
+                        }
+                    ) {
 
                         Icon(
                             Icons.Default.Delete,
-                            contentDescription = null
+                            contentDescription = "حذف عادت"
                         )
 
                     }
@@ -241,6 +248,89 @@ fun HabitDetailScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
         }
+
+    }
+
+    if (uiState.showDeleteDialog) {
+
+        AlertDialog(
+
+            onDismissRequest = {
+
+                viewModel.dismissDeleteDialog()
+
+            },
+
+            title = {
+
+                Text(
+                    text = "مطمئنی می‌خوای بیخیال این عادت بشی؟!",
+                    style = MaterialTheme.typography.titleLarge
+                )
+
+            },
+
+            text = {
+
+                Text(
+                    text = "با حذف این عادت، اطلاعات مربوط به آن از لیست عادت‌های فعال شما حذف می‌شود."
+                )
+
+            },
+
+            confirmButton = {
+
+                TextButton(
+
+                    modifier = Modifier.fillMaxWidth(),
+
+                    onClick = {
+
+                        viewModel.deleteHabit {
+
+                            onDelete()
+
+                        }
+
+                    }
+
+                ) {
+
+                    Text(
+                        text = "آره، بیخیالش میشم",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+
+                }
+
+            },
+
+            dismissButton = {
+
+                TextButton(
+
+                    modifier = Modifier.fillMaxWidth(),
+
+                    onClick = {
+
+                        viewModel.dismissDeleteDialog()
+
+                    }
+
+                ) {
+
+                    Text(
+                        text = "نه، نگهش می‌دارم",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+
+                }
+
+            }
+
+        )
 
     }
 

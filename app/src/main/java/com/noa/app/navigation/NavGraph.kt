@@ -12,6 +12,7 @@ import com.noa.app.ui.screens.profile.WelcomeScreen
 import com.noa.app.ui.screens.celebration.FirstHabitCelebrationScreen
 import com.noa.app.ui.screens.addhabit.AddHabitScreen
 import com.noa.app.ui.screens.habitdetail.HabitDetailScreen
+import com.noa.app.ui.screens.edithabit.EditHabitScreen
 
 @Composable
 fun NoANavGraph() {
@@ -190,13 +191,37 @@ fun NoANavGraph() {
 
                 onEdit = {
 
-                    // نسخه بعد
+                    navController.navigate(
+                        Routes.EditHabit.createRoute(habitId)
+                    )
 
                 },
 
                 onDelete = {
 
-                    // نسخه بعد
+                    navController.popBackStack()
+
+                }
+
+            )
+
+        }
+
+        composable(
+            Routes.EditHabit.route
+        ) {
+
+            EditHabitScreen(
+
+                onFinished = {
+
+                    navController.popBackStack()
+
+                },
+
+                onCancel = {
+
+                    navController.popBackStack()
 
                 }
 
