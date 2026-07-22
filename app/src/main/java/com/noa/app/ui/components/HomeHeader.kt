@@ -2,8 +2,20 @@ package com.noa.app.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,11 +35,14 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun HomeHeader(
 
-    userName: String? = null
+    userName: String? = null,
+
+    onMenuClick: () -> Unit = {}
 
 ) {
 
     val greeting =
+
         if (userName.isNullOrBlank())
             "سلام دوست من 🌱"
         else
@@ -37,73 +52,165 @@ fun HomeHeader(
 
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(24.dp))
-            .background(Background.copy(alpha = 0.55f))
-            .padding(horizontal = 18.dp, vertical = 14.dp),
+            .clip(
+                RoundedCornerShape(
+                    bottomStart = 24.dp,
+                    bottomEnd = 24.dp
+                )
+            )
+            .background(
 
-        verticalAlignment = Alignment.CenterVertically
+                color = MaterialTheme.colorScheme.primaryContainer
+
+            )
+            .padding(
+
+                horizontal = 18.dp,
+
+                vertical = 16.dp
+
+            ),
+
+        verticalAlignment =
+            Alignment.CenterVertically,
+
+        horizontalArrangement =
+            Arrangement.SpaceBetween
 
     ) {
 
-        Image(
 
-            painter = painterResource(R.drawable.leaf_background),
 
-            contentDescription = null,
+        Row(
 
-            modifier = Modifier.size(64.dp),
-
-        )
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Column(
-
-            modifier = Modifier.weight(1f),
-
-            horizontalAlignment = Alignment.Start
+            verticalAlignment =
+                Alignment.CenterVertically
 
         ) {
 
-            Text(
 
-                text = greeting,
 
-                style = MaterialTheme.typography.headlineSmall,
+            Image(
 
-                fontWeight = FontWeight.Bold,
+                painter =
+                    painterResource(
+                        id = R.drawable.default_avatar
+                    ),
 
-                textAlign = TextAlign.Start
+                contentDescription =
+                    "آواتار کاربر",
 
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-
-                text = "امروز هم یک قدم بهتر از دیروز باش.",
-
-                style = MaterialTheme.typography.bodyMedium,
-
-                color = TextSecondary,
-
-                textAlign = TextAlign.Start
+                modifier =
+                    Modifier
+                        .size(64.dp)
+                        .clip(
+                            RoundedCornerShape(
+                                20.dp
+                            )
+                        )
 
             )
 
+            Spacer(
+
+                modifier =
+                    Modifier.width(10.dp)
+
+            )
+
+            Column(
+
+                horizontalAlignment =
+                    Alignment.Start
+
+            ) {
+
+                Text(
+
+                    text = greeting,
+
+                    style =
+                        MaterialTheme.typography
+                            .titleMedium,
+
+                    fontWeight =
+                        FontWeight.Light,
+
+                    textAlign =
+                        TextAlign.Start
+
+                )
+
+                Spacer(
+
+                    modifier =
+                        Modifier.height(7.dp)
+
+                )
+
+                Text(
+
+                    text =
+                        "امروز هم یک قدم بهتر از دیروز باش.",
+
+                    style =
+                        MaterialTheme.typography
+                            .bodyMedium,
+
+                    color =
+                        TextSecondary,
+
+                    textAlign =
+                        TextAlign.Start
+
+                )
+
+            }
+
+            Spacer(
+
+                modifier =
+                    Modifier.width(25.dp)
+
+            )
+
+        }
+
+
+
+        IconButton(
+            onClick = onMenuClick
+        ) {
+            Icon(
+                imageVector = Icons.Default.Menu,
+                contentDescription = "منوی برنامه",
+                modifier = Modifier.size(32.dp)
+            )
         }
 
     }
 
 }
 
-@Preview(showBackground = true)
+@Preview(
+
+    showBackground = true,
+
+    showSystemUi = true
+
+)
 @Composable
 fun HomeHeaderPreview() {
 
     NoATheme {
 
-        HomeHeader()
+        HomeHeader(
+
+            userName = "مبینا",
+
+            onMenuClick = {}
+
+        )
 
     }
 
