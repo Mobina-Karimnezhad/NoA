@@ -31,6 +31,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.Alignment
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.runtime.rememberCoroutineScope
+import com.noa.app.ui.components.AppDrawer
+import kotlinx.coroutines.launch
+
 
 
 @Composable
@@ -40,11 +47,19 @@ fun HomeScreen(
 
     onHabitClick: (Int) -> Unit,
 
-    onMenuClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {}
 
 ) {
 
     val viewModel: HomeViewModel = hiltViewModel()
+
+    val drawerState =
+        rememberDrawerState(
+            initialValue = DrawerValue.Closed
+        )
+
+    val scope =
+        rememberCoroutineScope()
 
     val context = LocalContext.current
 
@@ -60,114 +75,153 @@ fun HomeScreen(
 
     )
 
-    Scaffold(
+    val userAvatarName by repository.userAvatar.collectAsState(
 
-        floatingActionButton = {
+        initial = null
 
-            FloatingActionButton(
+    )
 
-                onClick = onAddHabit
 
-            ) {
+    ModalNavigationDrawer(
 
-                Icon(
+        drawerState = drawerState,
 
-                    imageVector = Icons.Default.Add,
+        drawerContent = {
 
-                    contentDescription = "افزودن عادت"
+            AppDrawer(
 
-                )
+                drawerState = drawerState,
 
-            }
+                scope = scope,
+
+                onProfileClick = onProfileClick
+
+            )
 
         }
 
-    ) { padding ->
+    ) {
 
-        Column(
+        Scaffold(
 
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .navigationBarsPadding()
+            floatingActionButton = {
 
-        ) {
+                FloatingActionButton(
 
-            HomeHeader(
-
-                userName = userName,
-
-                onMenuClick = onMenuClick
-
-            )
-
-            Spacer(
-
-                modifier = Modifier.height(16.dp)
-
-            )
-
-            if (viewModel.habitCards.isEmpty()) {
-
-                Box(
-
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-
-                    contentAlignment = Alignment.Center
+                    onClick = onAddHabit
 
                 ) {
 
-                    Text(
+                    Icon(
 
-                        text = "هنوز عادتی ایجاد نشده است.",
+                        imageVector = Icons.Default.Add,
 
-                        style = MaterialTheme.typography.bodyLarge
+                        contentDescription = "افزودن عادت"
 
                     )
 
                 }
 
-            } else {
+            }
 
-                LazyColumn(
+        ) { padding ->
 
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(horizontal = 24.dp),
+            Column(
 
-                    contentPadding = PaddingValues(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .navigationBarsPadding()
 
-                        bottom = 96.dp
+            ) {
 
-                    ),
+                HomeHeader(
 
-                    verticalArrangement =
-                        Arrangement.spacedBy(20.dp)
+                    userName = userName,
 
-                ) {
+                    userAvatarName = userAvatarName,
 
-                    items(
+                    onMenuClick = {
 
-                        viewModel.habitCards
+                        scope.launch {
 
-                    ) { (userHabit, habit) ->
+                            drawerState.open()
 
-                        HomeHabitCard(
+                        }
 
-                            habit = habit,
+                    }
 
-                            userHabit = userHabit,
+                )
 
-                            onClick = {
+                Spacer(
 
-                                onHabitClick(userHabit.id)
+                    modifier = Modifier.height(16.dp)
 
-                            }
+                )
+
+                if (viewModel.habitCards.isEmpty()) {
+
+                    Box(
+
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+
+                        contentAlignment = Alignment.Center
+
+                    ) {
+
+                        Text(
+
+                            text = "هنوز عادتی ایجاد نشده است.",
+
+                            style = MaterialTheme.typography.bodyLarge
 
                         )
+
+                    }
+
+                } else {
+
+                    LazyColumn(
+
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .padding(horizontal = 24.dp),
+
+                        contentPadding = PaddingValues(
+
+                            bottom = 96.dp
+
+                        ),
+
+                        verticalArrangement =
+                            Arrangement.spacedBy(20.dp)
+
+                    ) {
+
+                        items(
+
+                            viewModel.habitCards
+
+                        ) { (userHabit, habit) ->
+
+                            HomeHabitCard(
+
+                                habit = habit,
+
+                                userHabit = userHabit,
+
+                                onClick = {
+
+                                    onHabitClick(userHabit.id)
+
+                                }
+
+                            )
+
+                        }
 
                     }
 

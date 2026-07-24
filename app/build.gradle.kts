@@ -65,4 +65,6 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
+    implementation("io.coil-kt.coil3:coil-compose:3.3.0")
+    implementation("com.vanniktech:android-image-cropper:4.6.0")
 }

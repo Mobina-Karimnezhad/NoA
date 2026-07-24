@@ -5,19 +5,30 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 
-val Context.dataStore by preferencesDataStore(
-    name = "user_preferences"
-)
-
 object UserPreferences {
 
+    val Context.dataStore by preferencesDataStore(
+        name = "user_preferences"
+    )
+
     val ONBOARDING_COMPLETED =
-        booleanPreferencesKey("onboarding_completed")
+        booleanPreferencesKey(
+            "onboarding_completed"
+        )
 
     val USER_NAME =
-        stringPreferencesKey("user_name")
+        stringPreferencesKey(
+            "user_name"
+        )
+
+    val USER_AVATAR =
+        stringPreferencesKey(
+            "user_avatar"
+        )
 
     val LAST_APP_OPEN_DATE =
-        stringPreferencesKey("last_app_open_date")
+        stringPreferencesKey(
+            "last_app_open_date"
+        )
 
 }

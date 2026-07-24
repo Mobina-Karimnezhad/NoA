@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.noa.app.R
-import com.noa.app.ui.theme.Background
+import com.noa.app.ui.screens.profile.avatarOptions
 import com.noa.app.ui.theme.NoATheme
 import com.noa.app.ui.theme.TextSecondary
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +36,8 @@ import androidx.compose.ui.tooling.preview.Preview
 fun HomeHeader(
 
     userName: String? = null,
+
+    userAvatarName: String? = null,
 
     onMenuClick: () -> Unit = {}
 
@@ -48,10 +50,21 @@ fun HomeHeader(
         else
             "سلام $userName 🌱"
 
+
+    val selectedAvatar =
+
+        avatarOptions.find {
+
+            it.name == userAvatarName
+
+        }
+
+
     Row(
 
         modifier = Modifier
             .fillMaxWidth()
+            .height(120.dp)
             .clip(
                 RoundedCornerShape(
                     bottomStart = 24.dp,
@@ -60,12 +73,15 @@ fun HomeHeader(
             )
             .background(
 
-                color = MaterialTheme.colorScheme.primaryContainer
+                color =
+                    MaterialTheme
+                        .colorScheme
+                        .primaryContainer
 
             )
             .padding(
 
-                horizontal = 18.dp,
+                horizontal = 10.dp,
 
                 vertical = 16.dp
 
@@ -80,7 +96,6 @@ fun HomeHeader(
     ) {
 
 
-
         Row(
 
             verticalAlignment =
@@ -89,34 +104,40 @@ fun HomeHeader(
         ) {
 
 
+            IconButton(
 
-            Image(
+                onClick =
+                    onMenuClick
 
-                painter =
-                    painterResource(
-                        id = R.drawable.default_avatar
-                    ),
+            ) {
 
-                contentDescription =
-                    "آواتار کاربر",
+                Icon(
 
-                modifier =
-                    Modifier
-                        .size(64.dp)
-                        .clip(
-                            RoundedCornerShape(
-                                20.dp
-                            )
+                    imageVector =
+                        Icons.Default.Menu,
+
+                    contentDescription =
+                        "منوی برنامه",
+
+                    modifier =
+                        Modifier.size(
+                            25.dp
                         )
 
-            )
+                )
+
+            }
+
 
             Spacer(
 
                 modifier =
-                    Modifier.width(10.dp)
+                    Modifier.width(
+                        10.dp
+                    )
 
             )
+
 
             Column(
 
@@ -127,10 +148,12 @@ fun HomeHeader(
 
                 Text(
 
-                    text = greeting,
+                    text =
+                        greeting,
 
                     style =
-                        MaterialTheme.typography
+                        MaterialTheme
+                            .typography
                             .titleMedium,
 
                     fontWeight =
@@ -141,12 +164,16 @@ fun HomeHeader(
 
                 )
 
+
                 Spacer(
 
                     modifier =
-                        Modifier.height(7.dp)
+                        Modifier.height(
+                            10.dp
+                        )
 
                 )
+
 
                 Text(
 
@@ -154,7 +181,8 @@ fun HomeHeader(
                         "امروز هم یک قدم بهتر از دیروز باش.",
 
                     style =
-                        MaterialTheme.typography
+                        MaterialTheme
+                            .typography
                             .bodyMedium,
 
                     color =
@@ -167,30 +195,53 @@ fun HomeHeader(
 
             }
 
+
             Spacer(
 
                 modifier =
-                    Modifier.width(25.dp)
+                    Modifier.width(
+                        15.dp
+                    )
 
             )
 
         }
 
 
+        Image(
 
-        IconButton(
-            onClick = onMenuClick
-        ) {
-            Icon(
-                imageVector = Icons.Default.Menu,
-                contentDescription = "منوی برنامه",
-                modifier = Modifier.size(32.dp)
-            )
-        }
+            painter = painterResource(
+
+                id =
+                    selectedAvatar?.imageRes
+                        ?: R.drawable.default_avatar
+
+            ),
+
+            contentDescription =
+
+                if (
+                    selectedAvatar == null
+                )
+                    "آواتار پیش‌فرض"
+                else
+                    "آواتار کاربر",
+
+            modifier =
+                Modifier
+                    .size(100.dp)
+                    .clip(
+                        RoundedCornerShape(
+                            20.dp
+                        )
+                    )
+
+        )
 
     }
 
 }
+
 
 @Preview(
 
@@ -206,9 +257,14 @@ fun HomeHeaderPreview() {
 
         HomeHeader(
 
-            userName = "مبینا",
+            userName =
+                "مبینا",
 
-            onMenuClick = {}
+            userAvatarName =
+                "avatar_3",
+
+            onMenuClick =
+                {}
 
         )
 

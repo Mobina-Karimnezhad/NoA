@@ -13,6 +13,7 @@ import com.noa.app.ui.screens.celebration.FirstHabitCelebrationScreen
 import com.noa.app.ui.screens.addhabit.AddHabitScreen
 import com.noa.app.ui.screens.habitdetail.HabitDetailScreen
 import com.noa.app.ui.screens.edithabit.EditHabitScreen
+import com.noa.app.ui.screens.profile.ProfileScreen
 
 @Composable
 fun NoANavGraph() {
@@ -147,6 +148,26 @@ fun NoANavGraph() {
 
         }
 
+        composable(Routes.Profile.route) {
+
+            ProfileScreen(
+
+                onBack = {
+
+                    navController.popBackStack()
+
+                },
+
+                onSaved = {
+
+                    navController.popBackStack()
+
+                }
+
+            )
+
+        }
+
         composable(Routes.Home.route) {
 
             HomeScreen(
@@ -163,6 +184,14 @@ fun NoANavGraph() {
 
                     navController.navigate(
                         Routes.HabitDetails.createRoute(id)
+                    )
+
+                },
+
+                onProfileClick = {
+
+                    navController.navigate(
+                        Routes.Profile.route
                     )
 
                 }
@@ -228,6 +257,7 @@ fun NoANavGraph() {
             )
 
         }
+
 
         composable(Routes.AddHabit.route) { backStackEntry ->
 

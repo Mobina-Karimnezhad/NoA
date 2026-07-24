@@ -43,6 +43,9 @@ sealed class Routes(val route: String) {
 
     data object Settings : Routes("settings")
 
+
+    data object Profile : Routes("profile")
+
     data object ChooseFirstHabit : Routes("choose_first_habit")
 
     data object FirstHabitCelebration : Routes("first_habit_celebration")

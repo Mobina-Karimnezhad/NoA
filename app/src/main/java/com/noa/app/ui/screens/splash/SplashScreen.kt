@@ -24,9 +24,9 @@ import kotlinx.coroutines.delay
 import androidx.compose.ui.tooling.preview.Preview
 import com.noa.app.ui.theme.NoATheme
 import androidx.compose.ui.platform.LocalContext
-import com.noa.app.data.datastore.dataStore
 import kotlinx.coroutines.flow.first
 import com.noa.app.data.datastore.UserPreferences
+import com.noa.app.data.datastore.UserPreferences.dataStore
 
 @Composable
 fun SplashScreen(
