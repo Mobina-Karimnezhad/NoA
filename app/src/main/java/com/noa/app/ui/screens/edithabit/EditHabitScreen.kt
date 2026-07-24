@@ -29,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.noa.app.ui.components.NumberStepper
 import com.noa.app.ui.components.WeekDaySelector
 import com.noa.app.ui.theme.PrimaryGreen
+import androidx.compose.foundation.background
 
 @Composable
 fun EditHabitScreen(
@@ -44,17 +45,14 @@ fun EditHabitScreen(
     val uiState = viewModel.uiState
 
     Column(
-
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp)
             .navigationBarsPadding(),
-
         horizontalAlignment = Alignment.CenterHorizontally,
-
         verticalArrangement = Arrangement.Top
-
     ) {
 
         Spacer(
@@ -62,11 +60,9 @@ fun EditHabitScreen(
         )
 
         Text(
-
             text = "ویرایش این عادت",
-
-            style = MaterialTheme.typography.headlineMedium
-
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(
@@ -74,11 +70,9 @@ fun EditHabitScreen(
         )
 
         Text(
-
             text = "اطلاعات عادتت را تغییر بده.",
-
-            style = MaterialTheme.typography.bodyLarge
-
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(
@@ -86,11 +80,9 @@ fun EditHabitScreen(
         )
 
         Text(
-
             text = "دسته",
-
-            style = MaterialTheme.typography.titleMedium
-
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(
@@ -127,7 +119,8 @@ fun EditHabitScreen(
 
                             width = 2.dp,
 
-                            color = PrimaryGreen,
+                            color =
+                                MaterialTheme.colorScheme.primary,
 
                             shape = RoundedCornerShape(16.dp)
 
@@ -140,11 +133,9 @@ fun EditHabitScreen(
                 )
 
                 Text(
-
                     text = habit.title,
-
-                    style = MaterialTheme.typography.bodyMedium
-
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
 
             }
@@ -156,31 +147,37 @@ fun EditHabitScreen(
         )
 
         OutlinedTextField(
-
             modifier = Modifier.fillMaxWidth(),
-
             value = uiState.customTitle,
-
             onValueChange = {
-
                 viewModel.updateTitle(it)
-
             },
-
             label = {
-
-                Text("عنوان عادت")
-
+                Text(
+                    text = "عنوان عادت"
+                )
             },
-
             placeholder = {
-
-                Text("مثلاً: پیاده‌روی")
-
+                Text(
+                    text = "مثلاً: پیاده‌روی"
+                )
             },
+            singleLine = true,
+            colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
 
-            singleLine = true
+                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
 
+                focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+
+                cursorColor = MaterialTheme.colorScheme.primary
+            )
         )
 
         Spacer(
@@ -188,11 +185,9 @@ fun EditHabitScreen(
         )
 
         Text(
-
             text = "تعداد روز هدف",
-
-            style = MaterialTheme.typography.titleMedium
-
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(
@@ -222,11 +217,9 @@ fun EditHabitScreen(
         )
 
         Text(
-
             text = "روزهای هفته",
-
-            style = MaterialTheme.typography.titleMedium
-
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(
@@ -250,11 +243,9 @@ fun EditHabitScreen(
         )
 
         Text(
-
-            text = "ساعت یادآور",
-
-            style = MaterialTheme.typography.titleMedium
-
+            text = "ساعت یادآوری",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(
@@ -262,11 +253,9 @@ fun EditHabitScreen(
         )
 
         Text(
-
             text = uiState.reminderTime,
-
-            style = MaterialTheme.typography.headlineSmall
-
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(

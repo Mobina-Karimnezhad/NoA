@@ -32,6 +32,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.foundation.background
+import androidx.compose.material3.OutlinedTextFieldDefaults
 
 @Composable
 fun AddHabitScreen(
@@ -65,47 +67,38 @@ fun AddHabitScreen(
 
 
     Column(
-
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp)
             .navigationBarsPadding(),
-
         horizontalAlignment = Alignment.CenterHorizontally,
-
         verticalArrangement = Arrangement.Top
-
     ) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-
             text = "افزودن عادت جدید",
-
-            style = MaterialTheme.typography.headlineMedium
-
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-
             text = "یک دسته انتخاب کن و عادت خودت را بساز.",
-
-            style = MaterialTheme.typography.bodyLarge
-
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-
             text = "دسته",
-
-            style = MaterialTheme.typography.titleMedium
-
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -163,11 +156,9 @@ fun AddHabitScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-
                         text = habit.title,
-
-                        style = MaterialTheme.typography.bodyMedium
-
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
 
                 }
@@ -179,39 +170,45 @@ fun AddHabitScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         OutlinedTextField(
-
             modifier = Modifier.fillMaxWidth(),
-
             value = uiState.customTitle,
-
             onValueChange = {
                 viewModel.updateTitle(it)
             },
-
             label = {
-
-                Text("عنوان عادت")
-
+                Text(
+                    text = "عنوان عادت"
+                )
             },
-
             placeholder = {
-
-                Text("مثلاً: پیاده‌روی")
-
+                Text(
+                    text = "مثلاً: پیاده‌روی"
+                )
             },
+            singleLine = true,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
 
-            singleLine = true
+                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
 
+                focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+
+                cursorColor = MaterialTheme.colorScheme.primary
+            )
         )
 
         Spacer(modifier = Modifier.height(28.dp))
 
         Text(
-
             text = "تعداد روز هدف",
-
-            style = MaterialTheme.typography.titleMedium
-
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -237,11 +234,9 @@ fun AddHabitScreen(
         Spacer(modifier = Modifier.height(28.dp))
 
         Text(
-
             text = "روزهای هفته",
-
-            style = MaterialTheme.typography.titleMedium
-
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -261,21 +256,17 @@ fun AddHabitScreen(
         Spacer(modifier = Modifier.height(28.dp))
 
         Text(
-
             text = "ساعت یادآوری",
-
-            style = MaterialTheme.typography.titleMedium
-
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-
             text = uiState.reminderTime,
-
-            style = MaterialTheme.typography.headlineSmall
-
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(12.dp))

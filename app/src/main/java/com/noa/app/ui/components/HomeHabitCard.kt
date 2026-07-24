@@ -46,10 +46,19 @@ fun HomeHabitCard(
 
         shape = RoundedCornerShape(24.dp),
 
-        border = BorderStroke(1.dp, Divider),
+        border = BorderStroke(
+
+            1.dp,
+
+            MaterialTheme.colorScheme.outline
+
+        ),
 
         colors = CardDefaults.cardColors(
-            containerColor = Background.copy(alpha = .55f)
+
+            containerColor =
+                MaterialTheme.colorScheme.surfaceVariant
+
         )
 
     ) {
@@ -92,7 +101,8 @@ fun HomeHabitCard(
 
                         text = habit.title,
 
-                        color = TextSecondary,
+                        color =
+                            MaterialTheme.colorScheme.onSurfaceVariant,
 
                         style = MaterialTheme.typography.bodyMedium
 
@@ -115,13 +125,12 @@ fun HomeHabitCard(
             Spacer(modifier = Modifier.height(12.dp))
 
             LinearProgressIndicator(
-
-                progress = { progress },
-
-                modifier = Modifier.fillMaxWidth(),
-
-                color = PrimaryGreen
-
+                progress = { progress.coerceIn(0f, 1f) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(5.dp),
+                color = PrimaryGreen,
+                trackColor = MaterialTheme.colorScheme.outlineVariant
             )
 
             Spacer(modifier = Modifier.height(8.dp))

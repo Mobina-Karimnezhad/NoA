@@ -20,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.noa.app.ui.theme.CardBorder
 import com.noa.app.ui.theme.PrimaryGreen
 import com.noa.app.ui.theme.Surface
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,7 +27,6 @@ import com.noa.app.ui.theme.NoATheme
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.ui.draw.scale
-import androidx.compose.animation.core.animateDpAsState
 import com.noa.app.ui.theme.Divider
 
 @Composable
@@ -45,9 +43,9 @@ fun HabitCard(
     val borderColor by animateColorAsState(
 
         if (selected)
-            PrimaryGreen
+            MaterialTheme.colorScheme.primary
         else
-            CardBorder,
+            MaterialTheme.colorScheme.outline,
 
         label = ""
 

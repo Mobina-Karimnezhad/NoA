@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.text.BidiFormatter
 import com.noa.app.R
-import com.noa.app.ui.theme.Background
 import com.noa.app.ui.theme.NoATheme
 import com.noa.app.ui.theme.TextSecondary
 
@@ -46,7 +45,8 @@ fun CurrentHabitCard(
 
         colors = CardDefaults.cardColors(
 
-            containerColor = Background.copy(alpha = 0.55f)
+            containerColor =
+                MaterialTheme.colorScheme.surfaceVariant
 
         )
 

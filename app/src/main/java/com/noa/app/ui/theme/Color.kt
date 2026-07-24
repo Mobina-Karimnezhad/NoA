@@ -59,3 +59,17 @@ val CardBorder = Color(0xFFE5E7EB)
    =========================== */
 
 val CardBackground = Color(0xFFFDFDFD)
+
+/* ===========================
+   Dark Theme Colors
+   =========================== */
+
+val DarkBackground = Color(0xFF121212)
+val DarkSurface = Color(0xFF1E1E1E)
+val DarkSurfaceVariant = Color(0xFF2A2A2A)
+
+val DarkTextPrimary = Color(0xFFF1F5F9)
+val DarkTextSecondary = Color(0xFFCBD5E1)
+
+val DarkDivider = Color(0xFF3F3F46)
+val DarkCardBorder = Color(0xFF404040)

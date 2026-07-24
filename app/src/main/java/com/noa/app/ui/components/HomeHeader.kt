@@ -120,9 +120,12 @@ fun HomeHeader(
                         "منوی برنامه",
 
                     modifier =
-                        Modifier.size(
-                            25.dp
-                        )
+                        Modifier.size(25.dp),
+
+                    tint =
+                        MaterialTheme
+                            .colorScheme
+                            .onPrimaryContainer
 
                 )
 
@@ -186,7 +189,7 @@ fun HomeHeader(
                             .bodyMedium,
 
                     color =
-                        TextSecondary,
+                        MaterialTheme.colorScheme.onPrimaryContainer,
 
                     textAlign =
                         TextAlign.Start
