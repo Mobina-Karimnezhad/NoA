@@ -199,6 +199,37 @@ class UserPreferencesRepository(
 
     }
 
+// -----------------------------
+// Dark Theme
+// -----------------------------
+
+    val isDarkTheme: Flow<Boolean> =
+
+        context.dataStore.data.map { preferences ->
+
+            preferences[
+                UserPreferences.IS_DARK_THEME
+            ] ?: false
+
+        }
+
+
+    suspend fun setDarkTheme(
+
+        enabled: Boolean
+
+    ) {
+
+        context.dataStore.edit { preferences ->
+
+            preferences[
+                UserPreferences.IS_DARK_THEME
+            ] = enabled
+
+        }
+
+    }
+
 
     // -----------------------------
     // Last App Open Date

@@ -26,6 +26,11 @@ object UserPreferences {
             "user_avatar"
         )
 
+    val IS_DARK_THEME =
+        booleanPreferencesKey(
+            "is_dark_theme"
+        )
+
     val LAST_APP_OPEN_DATE =
         stringPreferencesKey(
             "last_app_open_date"

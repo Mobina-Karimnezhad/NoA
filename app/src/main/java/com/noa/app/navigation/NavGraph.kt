@@ -14,11 +14,33 @@ import com.noa.app.ui.screens.addhabit.AddHabitScreen
 import com.noa.app.ui.screens.habitdetail.HabitDetailScreen
 import com.noa.app.ui.screens.edithabit.EditHabitScreen
 import com.noa.app.ui.screens.profile.ProfileScreen
+import com.noa.app.ui.main.MainViewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 
 @Composable
-fun NoANavGraph() {
+fun NoANavGraph(
+
+    mainViewModel: MainViewModel
+
+) {
 
     val navController = rememberNavController()
+
+    val isDarkTheme by
+    mainViewModel
+        .isDarkTheme
+        .collectAsState()
+
+    val userName by
+    mainViewModel
+        .userName
+        .collectAsState()
+
+    val userAvatarName by
+    mainViewModel
+        .userAvatarName
+        .collectAsState()
 
 
     NavHost(
@@ -194,7 +216,23 @@ fun NoANavGraph() {
                         Routes.Profile.route
                     )
 
-                }
+                },
+
+                isDarkTheme =
+                    isDarkTheme,
+
+                onDarkThemeChange = {
+
+                    mainViewModel
+                        .setDarkTheme(it)
+
+                },
+
+                userName =
+                    userName,
+
+                userAvatarName =
+                    userAvatarName
 
             )
 

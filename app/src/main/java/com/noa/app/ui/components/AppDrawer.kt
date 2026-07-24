@@ -2,6 +2,7 @@ package com.noa.app.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import androidx.compose.material3.Switch
 
 @Composable
 fun AppDrawer(
@@ -28,7 +30,11 @@ fun AppDrawer(
 
     scope: CoroutineScope,
 
-    onProfileClick: () -> Unit
+    onProfileClick: () -> Unit,
+
+    isDarkTheme: Boolean,
+
+    onDarkThemeChange: (Boolean) -> Unit
 
 ) {
 
@@ -114,6 +120,48 @@ fun AppDrawer(
                 }
 
             )
+
+            Row(
+
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            top = 16.dp,
+                            start = 12.dp,
+                            end = 12.dp
+                        ),
+
+                verticalAlignment =
+                    Alignment.CenterVertically
+
+            ) {
+
+                Text(
+
+                    text =
+                        "حالت شب",
+
+                    modifier =
+                        Modifier.weight(1f)
+
+                )
+
+
+                Switch(
+
+                    checked =
+                        isDarkTheme,
+
+                    onCheckedChange = {
+
+                        onDarkThemeChange(it)
+
+                    }
+
+                )
+
+            }
 
         }
 

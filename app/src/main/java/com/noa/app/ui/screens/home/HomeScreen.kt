@@ -17,14 +17,9 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.noa.app.data.datastore.UserPreferencesRepository
 import com.noa.app.ui.components.HomeHabitCard
 import com.noa.app.ui.components.HomeHeader
 import androidx.compose.foundation.layout.Box
@@ -39,7 +34,6 @@ import com.noa.app.ui.components.AppDrawer
 import kotlinx.coroutines.launch
 
 
-
 @Composable
 fun HomeScreen(
 
@@ -47,7 +41,15 @@ fun HomeScreen(
 
     onHabitClick: (Int) -> Unit,
 
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+
+    isDarkTheme: Boolean,
+
+    onDarkThemeChange: (Boolean) -> Unit,
+
+    userName: String,
+
+    userAvatarName: String?
 
 ) {
 
@@ -61,25 +63,6 @@ fun HomeScreen(
     val scope =
         rememberCoroutineScope()
 
-    val context = LocalContext.current
-
-    val repository = remember {
-
-        UserPreferencesRepository(context)
-
-    }
-
-    val userName by repository.userName.collectAsState(
-
-        initial = "دوست من"
-
-    )
-
-    val userAvatarName by repository.userAvatar.collectAsState(
-
-        initial = null
-
-    )
 
 
     ModalNavigationDrawer(
@@ -94,7 +77,11 @@ fun HomeScreen(
 
                 scope = scope,
 
-                onProfileClick = onProfileClick
+                onProfileClick = onProfileClick,
+
+                isDarkTheme = isDarkTheme,
+
+                onDarkThemeChange = onDarkThemeChange
 
             )
 
