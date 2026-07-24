@@ -151,104 +151,59 @@ class ProfileViewModel @Inject constructor(
     // -----------------------------
 
     fun saveProfile(
-
         onSaved: () -> Unit
-
     ) {
 
-        if (
-            uiState.userName.isBlank()
-        ) {
-
+        if (uiState.userName.isBlank()) {
             return
-
         }
-
 
         viewModelScope.launch {
 
-            uiState =
-
-                uiState.copy(
-
-                    isSaving =
-                        true,
-
-                    saveCompleted =
-                        false
-
-                )
-
+            uiState = uiState.copy(
+                isSaving = true,
+                saveCompleted = false
+            )
 
             try {
 
-                repository.saveUserName(
-
-                    uiState.userName
-                        .trim()
-
-                )
-
-
-                repository.saveUserAvatar(
-
-                    if (
-                        uiState.avatarMarkedForDeletion
-                    ) {
-
+                val finalAvatarName =
+                    if (uiState.avatarMarkedForDeletion) {
                         null
-
                     } else {
-
                         uiState.selectedAvatarName
-
                     }
 
+
+                // ذخیره نام و آواتار در یک تراکنش DataStore
+                repository.saveUserProfile(
+
+                    name = uiState.userName.trim(),
+
+                    avatarName = finalAvatarName
+
                 )
 
 
-                uiState =
+                // به‌روزرسانی State
+                uiState = uiState.copy(
 
-                    uiState.copy(
+                    avatarName =
+                        finalAvatarName,
 
-                        avatarName =
+                    selectedAvatarName =
+                        finalAvatarName,
 
-                            if (
-                                uiState.avatarMarkedForDeletion
-                            ) {
+                    avatarMarkedForDeletion =
+                        false,
 
-                                null
+                    isSaving =
+                        false,
 
-                            } else {
+                    saveCompleted =
+                        true
 
-                                uiState.selectedAvatarName
-
-                            },
-
-                        selectedAvatarName =
-
-                            if (
-                                uiState.avatarMarkedForDeletion
-                            ) {
-
-                                null
-
-                            } else {
-
-                                uiState.selectedAvatarName
-
-                            },
-
-                        avatarMarkedForDeletion =
-                            false,
-
-                        isSaving =
-                            false,
-
-                        saveCompleted =
-                            true
-
-                    )
+                )
 
 
                 onSaved()
@@ -258,15 +213,12 @@ class ProfileViewModel @Inject constructor(
 
                 e.printStackTrace()
 
+                uiState = uiState.copy(
 
-                uiState =
+                    isSaving =
+                        false
 
-                    uiState.copy(
-
-                        isSaving =
-                            false
-
-                    )
+                )
 
             }
 
