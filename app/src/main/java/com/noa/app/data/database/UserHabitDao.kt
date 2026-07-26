@@ -23,7 +23,7 @@ interface UserHabitDao {
     fun observeHabitByHabitId(habitId: Int): Flow<UserHabitEntity?>
 
     @Insert
-    suspend fun insertHabit(habit: UserHabitEntity)
+    suspend fun insertHabit(habit: UserHabitEntity): Long
 
     @Update
     suspend fun updateHabit(habit: UserHabitEntity)

@@ -1,7 +1,6 @@
 package com.noa.app.ui.screens.addhabit
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -14,16 +13,27 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.noa.app.data.datasource.DefaultHabitDataSource
+import com.noa.app.domain.reminder.ReminderScheduler
+import com.noa.app.data.notification.NotificationPermissionManager
 
 @HiltViewModel
 class AddHabitViewModel @Inject constructor(
 
     private val repository: UserHabitRepository,
-    private val habitDataSource: DefaultHabitDataSource
+    private val habitDataSource: DefaultHabitDataSource,
+    private val reminderScheduler: ReminderScheduler,
+    private val notificationPermissionManager: NotificationPermissionManager
 
 ) : ViewModel() {
 
     val habits = habitDataSource.getAll()
+
+    fun hasNotificationPermission(): Boolean {
+
+        return notificationPermissionManager
+            .isNotificationPermissionGranted()
+
+    }
 
     var uiState by mutableStateOf(
         AddHabitUiState(
@@ -83,11 +93,14 @@ class AddHabitViewModel @Inject constructor(
 
     }
 
-    fun updateReminderTime(time: String) {
+    fun updateReminderTime(
+        time: String
+    ) {
 
-        uiState = uiState.copy(
-            reminderTime = time
-        )
+        uiState =
+            uiState.copy(
+                reminderTime = time
+            )
 
     }
 
@@ -130,7 +143,17 @@ class AddHabitViewModel @Inject constructor(
 
         viewModelScope.launch {
 
-            repository.insertHabit(habit)
+            val insertedId =
+                repository.insertHabit(habit)
+
+            val savedHabit =
+                habit.copy(
+                    id = insertedId.toInt()
+                )
+
+            reminderScheduler.schedule(
+                savedHabit
+            )
 
             onFinished()
 

@@ -13,7 +13,7 @@ interface UserHabitRepository {
 
     fun getHabitByHabitId(habitId: Int): Flow<UserHabit?>
 
-    suspend fun insertHabit(habit: UserHabit)
+    suspend fun insertHabit(habit: UserHabit): Long
 
     suspend fun updateHabit(habit: UserHabit)
 

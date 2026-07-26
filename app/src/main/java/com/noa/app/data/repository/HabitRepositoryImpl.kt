@@ -42,8 +42,8 @@ class HabitRepositoryImpl(
 
     }
 
-    override suspend fun insertHabit(habit: UserHabit) {
-        dao.insertHabit(habit.toEntity())
+    override suspend fun insertHabit(habit: UserHabit): Long {
+        return dao.insertHabit(habit.toEntity())
     }
 
     override suspend fun updateHabit(habit: UserHabit) {

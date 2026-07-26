@@ -34,6 +34,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.background
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import android.Manifest
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import android.app.TimePickerDialog
+import java.util.Calendar
+import java.util.Locale
 
 @Composable
 fun AddHabitScreen(
@@ -50,6 +61,19 @@ fun AddHabitScreen(
 
     val uiState = viewModel.uiState
 
+    var showTimePicker by remember {
+        mutableStateOf(false)
+    }
+
+
+    val notificationPermissionLauncher =
+        rememberLauncherForActivityResult(
+            contract =
+                ActivityResultContracts.RequestPermission()
+        ) {
+            onFinished()
+        }
+
 
     LaunchedEffect(initialHabitId) {
 
@@ -64,6 +88,97 @@ fun AddHabitScreen(
         }
 
     }
+
+    fun continueAfterSave() {
+
+        if (
+            Build.VERSION.SDK_INT >=
+            Build.VERSION_CODES.TIRAMISU
+        ) {
+
+            if (
+                !viewModel.hasNotificationPermission()
+            ) {
+
+                notificationPermissionLauncher.launch(
+                    Manifest.permission.POST_NOTIFICATIONS
+                )
+
+                return
+
+            }
+
+        }
+
+        onFinished()
+
+    }
+
+
+    if (showTimePicker) {
+
+        val calendar = Calendar.getInstance()
+
+        val timeParts =
+            uiState.reminderTime.split(":")
+
+        val currentHour =
+            timeParts
+                .getOrNull(0)
+                ?.toIntOrNull()
+                ?: calendar.get(
+                    Calendar.HOUR_OF_DAY
+                )
+
+        val currentMinute =
+            timeParts
+                .getOrNull(1)
+                ?.toIntOrNull()
+                ?: calendar.get(
+                    Calendar.MINUTE
+                )
+
+        TimePickerDialog(
+
+            androidx.compose.ui.platform.LocalContext.current,
+
+            { _, hour, minute ->
+
+                val formattedTime =
+                    String.format(
+                        Locale.getDefault(),
+                        "%02d:%02d",
+                        hour,
+                        minute
+                    )
+
+                viewModel.updateReminderTime(
+                    formattedTime
+                )
+
+                showTimePicker = false
+
+            },
+
+            currentHour,
+
+            currentMinute,
+
+            true
+
+        ).apply {
+
+            setOnDismissListener {
+
+                showTimePicker = false
+
+            }
+
+        }.show()
+
+    }
+
+
 
 
     Column(
@@ -275,7 +390,7 @@ fun AddHabitScreen(
 
             onClick = {
 
-                // بعداً TimePicker
+                showTimePicker = true
 
             }
 
@@ -331,7 +446,7 @@ fun AddHabitScreen(
 
                 viewModel.saveHabit {
 
-                    onFinished()
+                    continueAfterSave()
 
                 }
 

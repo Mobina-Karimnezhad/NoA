@@ -17,15 +17,25 @@ import com.noa.app.ui.screens.profile.ProfileScreen
 import com.noa.app.ui.main.MainViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 @Composable
 fun NoANavGraph(
 
-    mainViewModel: MainViewModel
+    mainViewModel: MainViewModel,
+
+    notificationHabitId: Int? = null
 
 ) {
 
     val navController = rememberNavController()
+
+    var pendingNotificationHabitId by remember {
+        mutableStateOf(notificationHabitId)
+    }
 
     val isDarkTheme by
     mainViewModel
@@ -191,6 +201,24 @@ fun NoANavGraph(
         }
 
         composable(Routes.Home.route) {
+
+            LaunchedEffect(
+                pendingNotificationHabitId
+            ) {
+
+                pendingNotificationHabitId?.let { habitId ->
+
+                    navController.navigate(
+                        Routes.HabitDetails.createRoute(
+                            habitId
+                        )
+                    )
+
+                    pendingNotificationHabitId = null
+
+                }
+
+            }
 
             HomeScreen(
 
