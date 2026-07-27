@@ -30,6 +30,13 @@ import com.noa.app.ui.components.NumberStepper
 import com.noa.app.ui.components.WeekDaySelector
 import com.noa.app.ui.theme.PrimaryGreen
 import androidx.compose.foundation.background
+import android.app.TimePickerDialog
+import java.util.Calendar
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun EditHabitScreen(
@@ -43,6 +50,75 @@ fun EditHabitScreen(
 ) {
 
     val uiState = viewModel.uiState
+
+    var showTimePicker by remember {
+        mutableStateOf(false)
+    }
+
+    if (showTimePicker) {
+
+        val calendar =
+            Calendar.getInstance()
+
+        val timeParts =
+            uiState.reminderTime
+                .split(":")
+
+        val currentHour =
+            timeParts
+                .getOrNull(0)
+                ?.toIntOrNull()
+                ?: calendar.get(
+                    Calendar.HOUR_OF_DAY
+                )
+
+        val currentMinute =
+            timeParts
+                .getOrNull(1)
+                ?.toIntOrNull()
+                ?: calendar.get(
+                    Calendar.MINUTE
+                )
+
+        TimePickerDialog(
+
+            LocalContext.current,
+
+            { _, hour, minute ->
+
+                val formattedTime =
+                    String.format(
+                        java.util.Locale.getDefault(),
+                        "%02d:%02d",
+                        hour,
+                        minute
+                    )
+
+                viewModel.updateReminderTime(
+                    formattedTime
+                )
+
+                showTimePicker = false
+
+            },
+
+            currentHour,
+
+            currentMinute,
+
+            true
+
+        ).apply {
+
+            setOnDismissListener {
+
+                showTimePicker = false
+
+            }
+
+        }.show()
+
+    }
 
     Column(
         modifier = Modifier
@@ -259,18 +335,24 @@ fun EditHabitScreen(
         )
 
         Spacer(
-            modifier = Modifier.height(8.dp)
+            modifier = Modifier.height(12.dp)
         )
 
-        Text(
+        OutlinedButton(
 
-            text = "تنظیم ساعت یادآور در نسخه‌های بعدی اضافه خواهد شد.",
+            onClick = {
 
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                showTimePicker = true
 
-            style = MaterialTheme.typography.bodyMedium
+            }
 
-        )
+        ) {
+
+            Text(
+                text = "تغییر ساعت"
+            )
+
+        }
 
         Spacer(
             modifier = Modifier.height(32.dp)

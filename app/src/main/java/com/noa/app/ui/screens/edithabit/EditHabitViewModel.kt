@@ -13,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.noa.app.domain.reminder.ReminderScheduler
 
 @HiltViewModel
 class EditHabitViewModel @Inject constructor(
@@ -20,6 +21,8 @@ class EditHabitViewModel @Inject constructor(
     private val repository: UserHabitRepository,
 
     private val habitDataSource: DefaultHabitDataSource,
+
+    private val reminderScheduler: ReminderScheduler,
 
     savedStateHandle: SavedStateHandle
 
@@ -202,9 +205,11 @@ class EditHabitViewModel @Inject constructor(
             )
 
             repository.updateHabit(
-
                 updatedHabit
+            )
 
+            reminderScheduler.reschedule(
+                updatedHabit
             )
 
             uiState = uiState.copy(

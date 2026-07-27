@@ -35,6 +35,8 @@ class CompleteHabitUseCase @Inject constructor() {
 
         val finished =
             newStreak >= habit.targetDays
+        /*val finished =
+            newStreak >= 2*/
 
 
 

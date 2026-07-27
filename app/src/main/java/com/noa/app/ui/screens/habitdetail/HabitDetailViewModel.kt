@@ -15,6 +15,7 @@ import javax.inject.Inject
 import com.noa.app.domain.usecase.CompleteHabitUseCase
 import com.noa.app.domain.model.WeekDay
 import java.util.Calendar
+import com.noa.app.domain.reminder.ReminderScheduler
 
 @HiltViewModel
 class HabitDetailViewModel @Inject constructor(
@@ -24,6 +25,8 @@ class HabitDetailViewModel @Inject constructor(
     private val habitDataSource: DefaultHabitDataSource,
 
     private val completeHabitUseCase: CompleteHabitUseCase,
+
+    private val reminderScheduler: ReminderScheduler,
 
     savedStateHandle: SavedStateHandle
 
@@ -71,15 +74,23 @@ class HabitDetailViewModel @Inject constructor(
 
                         isLoading = false,
 
+                        completedToday =
+                            userHabit?.completedToday
+                                ?: false,
+
                         canCompleteToday =
                             userHabit != null &&
                                     !userHabit.completedToday &&
                                     !userHabit.isCompleted &&
-                                    isTodaySelected(userHabit.selectedDays),
+                                    isTodaySelected(
+                                        userHabit.selectedDays
+                                    ),
 
                         todaySelected =
                             userHabit?.let {
-                                isTodaySelected(it.selectedDays)
+                                isTodaySelected(
+                                    it.selectedDays
+                                )
                             } ?: false
 
                     )
@@ -102,17 +113,30 @@ class HabitDetailViewModel @Inject constructor(
 
                 repository.updateHabit(updatedHabit)
 
+                if (updatedHabit.isCompleted) {
+
+                    reminderScheduler.cancel(
+                        updatedHabit.id
+                    )
+
+                }
+
                 uiState = uiState.copy(
 
                     userHabit = updatedHabit,
 
-                    completedToday = true,
+                    completedToday =
+                        updatedHabit.completedToday,
 
-                    showCompleteDialog = updatedHabit.isCompleted
+                    canCompleteToday = false,
+
+                    showCompleteDialog =
+                        updatedHabit.isCompleted
 
                 )
 
             }
+
 
         }
 
