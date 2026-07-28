@@ -13,6 +13,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import com.noa.app.data.datastore.UserPreferencesRepository
+import com.noa.app.data.database.HabitCompletionDao
+import com.noa.app.data.repository.HabitCompletionRepositoryImpl
+import com.noa.app.domain.repository.HabitCompletionRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -29,7 +32,7 @@ object DatabaseModule {
             NoADatabase::class.java,
             "noa_database"
         )
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
     }
 
@@ -43,12 +46,30 @@ object DatabaseModule {
     }
 
     @Provides
+    fun provideHabitCompletionDao(
+        database: NoADatabase
+    ): HabitCompletionDao {
+
+        return database.habitCompletionDao()
+    }
+
+    @Provides
     @Singleton
     fun provideUserHabitRepository(
         dao: UserHabitDao
     ): UserHabitRepository {
 
         return HabitRepositoryImpl(dao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideHabitCompletionRepository(
+        dao: HabitCompletionDao
+    ): HabitCompletionRepository {
+
+        return HabitCompletionRepositoryImpl(dao)
+
     }
 
     @Provides

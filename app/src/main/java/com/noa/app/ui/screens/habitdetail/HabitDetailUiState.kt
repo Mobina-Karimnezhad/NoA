@@ -1,7 +1,9 @@
 package com.noa.app.ui.screens.habitdetail
 
 import com.noa.app.domain.model.Habit
+import com.noa.app.domain.model.HabitCompletion
 import com.noa.app.domain.model.UserHabit
+import java.time.LocalDate
 
 data class HabitDetailUiState(
 
@@ -21,6 +23,22 @@ data class HabitDetailUiState(
 
     val canCompleteToday: Boolean = false,
 
-    val todaySelected: Boolean = false
+    val todaySelected: Boolean = false,
+
+    // -------------------------
+    // Habit Calendar
+    // -------------------------
+
+    val calendarDays: List<HabitCalendarDay> = emptyList(),
+
+    val currentCompletions: List<HabitCompletion> = emptyList(),
+
+    val displayedWeekStart: LocalDate? = null,
+
+    val firstAllowedWeekStart: LocalDate? = null,
+
+    val canGoPrevious: Boolean = false,
+
+    val canGoNext: Boolean = false
 
 )

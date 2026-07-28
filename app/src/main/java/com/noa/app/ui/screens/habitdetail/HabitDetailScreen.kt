@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.text.style.TextAlign
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -206,6 +207,53 @@ fun HabitDetailScreen(
                         ?.selectedDays
                         ?.joinToString(" • ") { it.persianTitle }
                         ?: "-"
+
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+
+                text = "گزارش هفتگی من",
+
+                modifier =
+                    Modifier
+                        .fillMaxWidth(),
+
+                style =
+                    MaterialTheme
+                        .typography
+                        .labelMedium,
+
+                color =
+                    MaterialTheme
+                        .colorScheme
+                        .primary,
+
+                textAlign = TextAlign.Start
+
+            )
+
+            Spacer(
+                modifier =
+                    Modifier.height(8.dp)
+            )
+
+            HabitWeeklyCalendar(
+
+                days = uiState.calendarDays,
+
+                canGoPrevious =
+                    uiState.canGoPrevious,
+
+                canGoNext =
+                    uiState.canGoNext,
+
+                onPreviousWeek =
+                    viewModel::previousWeek,
+
+                onNextWeek =
+                    viewModel::nextWeek
 
             )
 

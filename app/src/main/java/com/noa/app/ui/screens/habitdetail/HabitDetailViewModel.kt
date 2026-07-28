@@ -7,20 +7,26 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.noa.app.data.datasource.DefaultHabitDataSource
+import com.noa.app.domain.model.WeekDay
+import com.noa.app.domain.reminder.ReminderScheduler
+import com.noa.app.domain.repository.HabitCompletionRepository
 import com.noa.app.domain.repository.UserHabitRepository
+import com.noa.app.domain.usecase.CompleteHabitUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.ZoneId
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.noa.app.domain.usecase.CompleteHabitUseCase
-import com.noa.app.domain.model.WeekDay
-import java.util.Calendar
-import com.noa.app.domain.reminder.ReminderScheduler
 
 @HiltViewModel
 class HabitDetailViewModel @Inject constructor(
 
     private val repository: UserHabitRepository,
+
+    private val completionRepository: HabitCompletionRepository,
 
     private val habitDataSource: DefaultHabitDataSource,
 
@@ -43,11 +49,17 @@ class HabitDetailViewModel @Inject constructor(
     )
         private set
 
+    private var completionsJob: Job? = null
+
     init {
 
         observeHabit()
 
     }
+
+    // =========================================================
+    // Observe User Habit
+    // =========================================================
 
     private fun observeHabit() {
 
@@ -66,34 +78,50 @@ class HabitDetailViewModel @Inject constructor(
 
                             }
 
-                    uiState = uiState.copy(
+                    uiState =
+                        uiState.copy(
 
-                        userHabit = userHabit,
+                            userHabit =
+                                userHabit,
 
-                        habit = habit,
+                            habit =
+                                habit,
 
-                        isLoading = false,
+                            isLoading =
+                                false,
 
-                        completedToday =
-                            userHabit?.completedToday
-                                ?: false,
+                            completedToday =
+                                userHabit?.completedToday
+                                    ?: false,
 
-                        canCompleteToday =
-                            userHabit != null &&
-                                    !userHabit.completedToday &&
-                                    !userHabit.isCompleted &&
+                            canCompleteToday =
+                                userHabit != null &&
+                                        !userHabit.completedToday &&
+                                        !userHabit.isCompleted &&
+                                        isTodaySelected(
+                                            userHabit.selectedDays
+                                        ),
+
+                            todaySelected =
+                                userHabit?.let {
+
                                     isTodaySelected(
-                                        userHabit.selectedDays
-                                    ),
+                                        it.selectedDays
+                                    )
 
-                        todaySelected =
-                            userHabit?.let {
-                                isTodaySelected(
-                                    it.selectedDays
-                                )
-                            } ?: false
+                                } ?: false
 
-                    )
+                        )
+
+                    if (userHabit != null) {
+
+                        initializeCalendar(
+                            userHabit
+                        )
+
+                        observeCompletions()
+
+                    }
 
                 }
 
@@ -101,19 +129,347 @@ class HabitDetailViewModel @Inject constructor(
 
     }
 
+    // =========================================================
+    // Observe Completion History
+    // =========================================================
+
+    private fun observeCompletions() {
+
+        completionsJob?.cancel()
+
+        completionsJob =
+            viewModelScope.launch {
+
+                completionRepository
+                    .getCompletions(habitId)
+                    .collectLatest { completions ->
+
+                        uiState =
+                            uiState.copy(
+
+                                currentCompletions =
+                                    completions
+
+                            )
+
+                        updateCalendar()
+
+                    }
+
+            }
+
+    }
+
+    // =========================================================
+    // Initialize Calendar
+    // =========================================================
+
+    private fun initializeCalendar(
+        userHabit: com.noa.app.domain.model.UserHabit
+    ) {
+
+        val firstWeek =
+            startOfWeek(
+                createdDateOf(
+                    userHabit.createdAt
+                )
+            )
+
+        val lastAllowedWeek =
+            getLastAllowedWeek(
+                userHabit
+            )
+
+        /*
+         * اگر قبلاً هفته‌ای توسط کاربر انتخاب شده باشد،
+         * همان هفته حفظ می‌شود.
+         *
+         * در غیر این صورت:
+         *
+         * - عادت تکمیل شده → هفته تکمیل عادت
+         * - عادت فعال → هفته جاری
+         */
+        val displayedWeek =
+            uiState.displayedWeekStart
+                ?: lastAllowedWeek
+
+        val safeDisplayedWeek =
+            when {
+
+                displayedWeek.isBefore(
+                    firstWeek
+                ) ->
+                    firstWeek
+
+                displayedWeek.isAfter(
+                    lastAllowedWeek
+                ) ->
+                    lastAllowedWeek
+
+                else ->
+                    displayedWeek
+
+            }
+
+        uiState =
+            uiState.copy(
+
+                displayedWeekStart =
+                    safeDisplayedWeek,
+
+                firstAllowedWeekStart =
+                    firstWeek,
+
+                canGoPrevious =
+                    safeDisplayedWeek.isAfter(
+                        firstWeek
+                    ),
+
+                canGoNext =
+                    safeDisplayedWeek.isBefore(
+                        lastAllowedWeek
+                    )
+
+            )
+
+        updateCalendar()
+
+    }
+
+    // =========================================================
+    // Get Last Allowed Week
+    // =========================================================
+
+    private fun getLastAllowedWeek(
+        userHabit: com.noa.app.domain.model.UserHabit
+    ): LocalDate {
+
+        /*
+         * اگر عادت تکمیل شده باشد،
+         * lastCompletedDate همان تاریخ واقعی تکمیل نهایی عادت است.
+         *
+         * بنابراین هفته‌ای که این تاریخ در آن قرار دارد،
+         * آخرین هفته‌ای است که باید نمایش داده شود.
+         */
+        if (
+            userHabit.isCompleted &&
+            userHabit.lastCompletedDate != null
+        ) {
+
+            val completionDate =
+                runCatching {
+
+                    LocalDate.parse(
+                        userHabit.lastCompletedDate
+                    )
+
+                }.getOrNull()
+
+            if (
+                completionDate != null
+            ) {
+
+                return startOfWeek(
+                    completionDate
+                )
+
+            }
+
+        }
+
+        /*
+         * اگر عادت هنوز تکمیل نشده،
+         * کاربر فقط تا هفته جاری می‌تواند جلو برود.
+         */
+        return startOfWeek(
+            LocalDate.now()
+        )
+
+    }
+
+    // =========================================================
+    // Update Calendar
+    // =========================================================
+
+    private fun updateCalendar() {
+
+        val userHabit =
+            uiState.userHabit
+                ?: return
+
+        val weekStart =
+            uiState.displayedWeekStart
+                ?: return
+
+        val weekDates =
+            (0..6).map { offset ->
+
+                weekStart.plusDays(
+                    offset.toLong()
+                )
+
+            }
+
+        val calendarDays =
+            HabitCalendarMapper.mapWeek(
+
+                weekDates =
+                    weekDates,
+
+                userHabit =
+                    userHabit,
+
+                completions =
+                    uiState.currentCompletions
+
+            )
+
+        val firstWeek =
+            uiState.firstAllowedWeekStart
+                ?: startOfWeek(
+                    createdDateOf(
+                        userHabit.createdAt
+                    )
+                )
+
+        val lastAllowedWeek =
+            getLastAllowedWeek(
+                userHabit
+            )
+
+        uiState =
+            uiState.copy(
+
+                calendarDays =
+                    calendarDays,
+
+                canGoPrevious =
+                    weekStart.isAfter(
+                        firstWeek
+                    ),
+
+                canGoNext =
+                    weekStart.isBefore(
+                        lastAllowedWeek
+                    )
+
+            )
+
+    }
+
+    // =========================================================
+    // Previous Week
+    // =========================================================
+
+    fun previousWeek() {
+
+        val currentWeek =
+            uiState.displayedWeekStart
+                ?: return
+
+        val firstWeek =
+            uiState.firstAllowedWeekStart
+                ?: return
+
+        val previousWeek =
+            currentWeek.minusWeeks(
+                1
+            )
+
+        if (
+            previousWeek.isBefore(
+                firstWeek
+            )
+        ) {
+
+            return
+
+        }
+
+        uiState =
+            uiState.copy(
+
+                displayedWeekStart =
+                    previousWeek
+
+            )
+
+        updateCalendar()
+
+    }
+
+    // =========================================================
+    // Next Week
+    // =========================================================
+
+    fun nextWeek() {
+
+        val currentWeek =
+            uiState.displayedWeekStart
+                ?: return
+
+        val userHabit =
+            uiState.userHabit
+                ?: return
+
+        val lastAllowedWeek =
+            getLastAllowedWeek(
+                userHabit
+            )
+
+        val nextWeek =
+            currentWeek.plusWeeks(
+                1
+            )
+
+        if (
+            nextWeek.isAfter(
+                lastAllowedWeek
+            )
+        ) {
+
+            return
+
+        }
+
+        uiState =
+            uiState.copy(
+
+                displayedWeekStart =
+                    nextWeek
+
+            )
+
+        updateCalendar()
+
+    }
+
+    // =========================================================
+    // Complete Habit Today
+    // =========================================================
+
     fun completeToday() {
 
-        val current = uiState.userHabit ?: return
+        val current =
+            uiState.userHabit
+                ?: return
 
         viewModelScope.launch {
 
-            val result = completeHabitUseCase(current)
+            val result =
+                completeHabitUseCase(
+                    current
+                )
 
             result?.let { updatedHabit ->
 
-                repository.updateHabit(updatedHabit)
+                repository.updateHabit(
+                    updatedHabit
+                )
 
-                if (updatedHabit.isCompleted) {
+                if (
+                    updatedHabit.isCompleted
+                ) {
 
                     reminderScheduler.cancel(
                         updatedHabit.id
@@ -121,78 +477,151 @@ class HabitDetailViewModel @Inject constructor(
 
                 }
 
-                uiState = uiState.copy(
+                /*
+                 * اگر همین امروز عادت به‌طور کامل تمام شده،
+                 * هفته فعلی دیگر باید سقف تقویم باشد.
+                 *
+                 * چون updatedHabit.isCompleted و
+                 * updatedHabit.lastCompletedDate
+                 * همینجا تغییر کرده‌اند،
+                 * getLastAllowedWeek()
+                 * از این به بعد هفته تکمیل نهایی را برمی‌گرداند.
+                 */
+                uiState =
+                    uiState.copy(
 
-                    userHabit = updatedHabit,
+                        userHabit =
+                            updatedHabit,
 
-                    completedToday =
-                        updatedHabit.completedToday,
+                        completedToday =
+                            updatedHabit.completedToday,
 
-                    canCompleteToday = false,
+                        canCompleteToday =
+                            false,
 
-                    showCompleteDialog =
-                        updatedHabit.isCompleted
+                        showCompleteDialog =
+                            updatedHabit.isCompleted
 
-                )
+                    )
+
+                /*
+                 * اگر عادت همین الان تکمیل نهایی شده،
+                 * هفته‌ای که تکمیل در آن اتفاق افتاده
+                 * باید آخرین هفته قابل مشاهده باشد.
+                 *
+                 * این باعث می‌شود تقویم هیچ‌وقت
+                 * به هفته‌ای بعد از پایان واقعی عادت نرود.
+                 */
+                if (
+                    updatedHabit.isCompleted
+                ) {
+
+                    val completionWeek =
+                        updatedHabit
+                            .lastCompletedDate
+                            ?.let { date ->
+
+                                runCatching {
+
+                                    startOfWeek(
+                                        LocalDate.parse(
+                                            date
+                                        )
+                                    )
+
+                                }.getOrNull()
+
+                            }
+
+                    if (
+                        completionWeek != null
+                    ) {
+
+                        uiState =
+                            uiState.copy(
+
+                                displayedWeekStart =
+                                    completionWeek
+
+                            )
+
+                    }
+
+                }
+
+                updateCalendar()
 
             }
-
 
         }
 
     }
 
+    // =========================================================
+    // Completed Dialog
+    // =========================================================
+
     fun showCompletedDialog() {
 
-        uiState = uiState.copy(
+        uiState =
+            uiState.copy(
 
-            showCompleteDialog = true
+                showCompleteDialog =
+                    true
 
-        )
+            )
 
     }
 
     fun dismissCompleteDialog() {
 
-        uiState = uiState.copy(
+        uiState =
+            uiState.copy(
 
-            showCompleteDialog = false
+                showCompleteDialog =
+                    false
 
-        )
+            )
 
     }
 
     fun resetTodayState() {
 
-        uiState = uiState.copy(
+        uiState =
+            uiState.copy(
 
-            completedToday = false
+                completedToday =
+                    false
 
-        )
+            )
 
     }
 
-    // -------------------------
+    // =========================================================
     // Delete Habit
-    // -------------------------
+    // =========================================================
 
     fun showDeleteDialog() {
 
-        uiState = uiState.copy(
+        uiState =
+            uiState.copy(
 
-            showDeleteDialog = true
+                showDeleteDialog =
+                    true
 
-        )
+            )
 
     }
 
     fun dismissDeleteDialog() {
 
-        uiState = uiState.copy(
+        uiState =
+            uiState.copy(
 
-            showDeleteDialog = false
+                showDeleteDialog =
+                    false
 
-        )
+            )
 
     }
 
@@ -208,13 +637,22 @@ class HabitDetailViewModel @Inject constructor(
 
         viewModelScope.launch {
 
-            repository.deleteHabit(currentHabit)
+            completionRepository
+                .deleteCompletionsForHabit(
+                    currentHabit.id
+                )
 
-            uiState = uiState.copy(
-
-                showDeleteDialog = false
-
+            repository.deleteHabit(
+                currentHabit
             )
+
+            uiState =
+                uiState.copy(
+
+                    showDeleteDialog =
+                        false
+
+                )
 
             onDeleted()
 
@@ -222,25 +660,79 @@ class HabitDetailViewModel @Inject constructor(
 
     }
 
+    // =========================================================
+    // Check Today's Selected Day
+    // =========================================================
+
     private fun isTodaySelected(
         selectedDays: List<WeekDay>
     ): Boolean {
 
-        val calendar = Calendar.getInstance()
+        val today =
+            when (
+                LocalDate.now().dayOfWeek
+            ) {
 
-        val today = when (calendar.get(Calendar.DAY_OF_WEEK)) {
+                DayOfWeek.SATURDAY ->
+                    WeekDay.SAT
 
-            Calendar.SATURDAY -> WeekDay.SAT
-            Calendar.SUNDAY -> WeekDay.SUN
-            Calendar.MONDAY -> WeekDay.MON
-            Calendar.TUESDAY -> WeekDay.TUE
-            Calendar.WEDNESDAY -> WeekDay.WED
-            Calendar.THURSDAY -> WeekDay.THU
-            else -> WeekDay.FRI
+                DayOfWeek.SUNDAY ->
+                    WeekDay.SUN
 
-        }
+                DayOfWeek.MONDAY ->
+                    WeekDay.MON
+
+                DayOfWeek.TUESDAY ->
+                    WeekDay.TUE
+
+                DayOfWeek.WEDNESDAY ->
+                    WeekDay.WED
+
+                DayOfWeek.THURSDAY ->
+                    WeekDay.THU
+
+                else ->
+                    WeekDay.FRI
+
+            }
 
         return today in selectedDays
+
+    }
+
+    // =========================================================
+    // Created Date
+    // =========================================================
+
+    private fun createdDateOf(
+        createdAt: Long
+    ): LocalDate {
+
+        return java.time.Instant
+            .ofEpochMilli(
+                createdAt
+            )
+            .atZone(
+                ZoneId.systemDefault()
+            )
+            .toLocalDate()
+
+    }
+
+    // =========================================================
+    // Start Of Week
+    // =========================================================
+
+    private fun startOfWeek(
+        date: LocalDate
+    ): LocalDate {
+
+        return date.with(
+            java.time.temporal.TemporalAdjusters
+                .previousOrSame(
+                    DayOfWeek.SATURDAY
+                )
+        )
 
     }
 

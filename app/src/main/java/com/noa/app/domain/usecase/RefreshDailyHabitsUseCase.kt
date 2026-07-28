@@ -44,9 +44,20 @@ class RefreshDailyHabitsUseCase @Inject constructor(
                 val updatedHabit =
                     habit.copy(
                         completedToday = false,
+
                         currentStreak =
-                            if (shouldReset) 0
-                            else habit.currentStreak
+                            if (
+                                habit.isCompleted
+                            ) {
+                                // habit is completed, don't reset the streak!
+                                habit.currentStreak
+                            } else if (
+                                shouldReset
+                            ) {
+                                0
+                            } else {
+                                habit.currentStreak
+                            }
                     )
 
                 repository.updateHabit(updatedHabit)

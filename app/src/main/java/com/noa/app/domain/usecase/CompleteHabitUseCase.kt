@@ -1,15 +1,19 @@
 package com.noa.app.domain.usecase
 
-import android.util.Log
+import com.noa.app.domain.helper.StreakCalculator
+import com.noa.app.domain.model.HabitCompletion
 import com.noa.app.domain.model.UserHabit
-import javax.inject.Inject
-import java.util.Calendar
+import com.noa.app.domain.repository.HabitCompletionRepository
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import com.noa.app.domain.helper.StreakCalculator
+import javax.inject.Inject
 
-class CompleteHabitUseCase @Inject constructor() {
+class CompleteHabitUseCase @Inject constructor(
+
+    private val completionRepository: HabitCompletionRepository
+
+) {
 
     suspend operator fun invoke(
         habit: UserHabit
@@ -18,39 +22,71 @@ class CompleteHabitUseCase @Inject constructor() {
         if (habit.isCompleted)
             return null
 
-        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val formatter =
+            SimpleDateFormat(
+                "yyyy-MM-dd",
+                Locale.getDefault()
+            )
 
-        val today = formatter.format(Date())
+        val today =
+            formatter.format(Date())
 
         if (habit.lastCompletedDate == today)
             return null
 
         val newStreak =
             StreakCalculator.calculateNewStreak(
-                lastCompletedDate = habit.lastCompletedDate,
-                currentStreak = habit.currentStreak,
-                selectedDays = habit.selectedDays,
-                today = today
+                lastCompletedDate =
+                    habit.lastCompletedDate,
+
+                currentStreak =
+                    habit.currentStreak,
+
+                selectedDays =
+                    habit.selectedDays,
+
+                today =
+                    today
             )
 
         val finished =
             newStreak >= habit.targetDays
-        /*val finished =
-            newStreak >= 2*/
 
+
+        completionRepository.insertCompletion(
+
+            HabitCompletion(
+
+                userHabitId =
+                    habit.id,
+
+                date =
+                    today,
+
+                completed =
+                    true
+
+            )
+
+        )
 
 
         return habit.copy(
 
-            currentStreak = newStreak,
+            currentStreak =
+                newStreak,
 
-            lastCompletedDate = today,
+            lastCompletedDate =
+                today,
 
-            completedToday = true,
+            completedToday =
+                true,
 
-            isCompleted = finished
+            isCompleted =
+                finished
 
         )
 
     }
+
 }
