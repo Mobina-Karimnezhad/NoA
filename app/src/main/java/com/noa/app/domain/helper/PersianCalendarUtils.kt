@@ -107,9 +107,6 @@ object PersianCalendarUtils {
         gy -= 621
         val jy = gy
 
-        // این شاخه فعلاً برای بازه‌های تاریخی قدیمی‌تر
-        // مورد نیاز پروژه NoA نیست.
-        // برای تاریخ‌های مدرن پروژه، شاخه بالا استفاده می‌شود.
 
         return PersianDate(
             year = jy,
@@ -181,6 +178,17 @@ object PersianCalendarUtils {
             }
 
         return persianWeekDayNames[index]
+    }
+
+
+    fun formatPersianDate(
+        date: java.time.LocalDate
+    ): String {
+
+        val p = fromGregorianLocalDate(date)
+
+        return "${p.day} ${monthName(p.month)} ${p.year}"
+
     }
 
 

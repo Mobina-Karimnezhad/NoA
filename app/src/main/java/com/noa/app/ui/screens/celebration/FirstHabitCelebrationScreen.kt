@@ -45,7 +45,7 @@ fun FirstHabitCelebrationScreen(
 
         Image(
 
-            painter = painterResource(R.drawable.illustration_first_habit),
+            painter = painterResource(R.drawable.ic_success),
 
             contentDescription = null,
 
@@ -57,7 +57,7 @@ fun FirstHabitCelebrationScreen(
 
         Text(
 
-            text = "🎉 تبریک!",
+            text = "تبریک!",
 
             style = MaterialTheme.typography.headlineMedium,
 

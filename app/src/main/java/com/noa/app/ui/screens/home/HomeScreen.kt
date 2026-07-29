@@ -43,6 +43,8 @@ fun HomeScreen(
 
     onProfileClick: () -> Unit = {},
 
+    onAchievementsClick: () -> Unit = {},
+
     isDarkTheme: Boolean,
 
     onDarkThemeChange: (Boolean) -> Unit,
@@ -72,17 +74,14 @@ fun HomeScreen(
         drawerContent = {
 
             AppDrawer(
-
                 drawerState = drawerState,
-
                 scope = scope,
-
                 onProfileClick = onProfileClick,
-
+                onAchievementsClick = {
+                    onAchievementsClick()
+                },
                 isDarkTheme = isDarkTheme,
-
                 onDarkThemeChange = onDarkThemeChange
-
             )
 
         }

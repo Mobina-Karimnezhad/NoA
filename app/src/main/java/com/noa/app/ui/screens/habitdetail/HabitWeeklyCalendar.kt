@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.noa.app.domain.helper.PersianCalendarUtils
+import androidx.compose.foundation.isSystemInDarkTheme
 
 @Composable
 fun HabitWeeklyCalendar(
@@ -209,28 +210,37 @@ private fun HabitCalendarDayItem(
 
 ) {
 
+    val isDark = isSystemInDarkTheme()
+
     val backgroundColor =
         when (day.status) {
 
             HabitCalendarDayStatus.COMPLETED ->
-                Color(0xFFDFF3E4)
+                if (isDark)
+                    Color(0xFF1E3A29)
+                else
+                    Color(0xFFDFF3E4)
 
             HabitCalendarDayStatus.MISSED ->
-                Color(0xFFFCE4E4)
+                if (isDark)
+                    Color(0xFF3D2020)
+                else
+                    Color(0xFFFCE4E4)
 
             HabitCalendarDayStatus.TODAY ->
-                MaterialTheme
-                    .colorScheme
-                    .surface
+                MaterialTheme.colorScheme.surface
 
             HabitCalendarDayStatus.FUTURE ->
-                MaterialTheme
-                    .colorScheme
-                    .surface
+                if (isDark)
+                    Color(0xFF2C2C2C)
+                else
+                    MaterialTheme.colorScheme.surface
 
             HabitCalendarDayStatus.NOT_SELECTED ->
-                Color(0xFFE7E7E7)
-
+                if (isDark)
+                    Color(0xFF3A3A3A)
+                else
+                    Color(0xFFE7E7E7)
         }
 
     val borderColor =
@@ -313,28 +323,37 @@ private fun HabitCalendarDayItem(
         Text(
 
             text =
-                day.persianWeekDayName
-                    .take(1),
+                day.persianWeekDayName.take(1),
 
             style =
-                MaterialTheme
-                    .typography
-                    .labelSmall,
+                MaterialTheme.typography.labelSmall,
+
+            fontWeight =
+                FontWeight.SemiBold,
 
             color =
-                if (
-                    day.status ==
-                    HabitCalendarDayStatus.NOT_SELECTED
-                ) {
+                when (day.status) {
 
-                    Color(0xFFBDBDBD)
+                    HabitCalendarDayStatus.COMPLETED ->
+                        if (isDark)
+                            Color.White
+                        else
+                            Color(0xFF1B5E20)
 
-                } else {
+                    HabitCalendarDayStatus.MISSED ->
+                        if (isDark)
+                            Color.White
+                        else
+                            Color(0xFFB71C1C)
 
-                    MaterialTheme
-                        .colorScheme
-                        .onSurfaceVariant
+                    HabitCalendarDayStatus.NOT_SELECTED ->
+                        if (isDark)
+                            Color(0xFFB5B5B5)
+                        else
+                            Color(0xFF707070)
 
+                    else ->
+                        MaterialTheme.colorScheme.onSurface
                 }
 
         )
@@ -455,6 +474,25 @@ private fun HabitCalendarDayItem(
                         text =
                             day.persianDayNumber,
 
+                        color =
+                            when(day.status){
+
+                                HabitCalendarDayStatus.NOT_SELECTED ->
+                                    if (isDark)
+                                        Color(0xFFB5B5B5)
+                                    else
+                                        Color(0xFF757575)
+
+                                HabitCalendarDayStatus.FUTURE ->
+                                    if (isDark)
+                                        Color(0xFFF2F2F2)
+                                    else
+                                        MaterialTheme.colorScheme.onSurface
+
+                                else ->
+                                    MaterialTheme.colorScheme.onSurface
+                            },
+
                         style =
                             MaterialTheme
                                 .typography
@@ -529,10 +567,9 @@ private fun HabitCalendarDayItem(
                             .typography
                             .labelSmall,
 
+
                     color =
-                        Color(
-                            0xFFD49B00
-                        ),
+                        MaterialTheme.colorScheme.primary,
 
                     fontWeight =
                         FontWeight.Bold

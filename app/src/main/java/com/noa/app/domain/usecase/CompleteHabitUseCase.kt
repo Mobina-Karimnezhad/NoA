@@ -50,7 +50,7 @@ class CompleteHabitUseCase @Inject constructor(
             )
 
         val finished =
-            newStreak >= habit.targetDays
+            newStreak == habit.targetDays
 
 
         completionRepository.insertCompletion(

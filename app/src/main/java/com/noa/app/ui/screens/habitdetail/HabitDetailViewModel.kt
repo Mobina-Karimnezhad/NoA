@@ -180,15 +180,6 @@ class HabitDetailViewModel @Inject constructor(
                 userHabit
             )
 
-        /*
-         * اگر قبلاً هفته‌ای توسط کاربر انتخاب شده باشد،
-         * همان هفته حفظ می‌شود.
-         *
-         * در غیر این صورت:
-         *
-         * - عادت تکمیل شده → هفته تکمیل عادت
-         * - عادت فعال → هفته جاری
-         */
         val displayedWeek =
             uiState.displayedWeekStart
                 ?: lastAllowedWeek
@@ -244,13 +235,6 @@ class HabitDetailViewModel @Inject constructor(
         userHabit: com.noa.app.domain.model.UserHabit
     ): LocalDate {
 
-        /*
-         * اگر عادت تکمیل شده باشد،
-         * lastCompletedDate همان تاریخ واقعی تکمیل نهایی عادت است.
-         *
-         * بنابراین هفته‌ای که این تاریخ در آن قرار دارد،
-         * آخرین هفته‌ای است که باید نمایش داده شود.
-         */
         if (
             userHabit.isCompleted &&
             userHabit.lastCompletedDate != null
@@ -277,10 +261,7 @@ class HabitDetailViewModel @Inject constructor(
 
         }
 
-        /*
-         * اگر عادت هنوز تکمیل نشده،
-         * کاربر فقط تا هفته جاری می‌تواند جلو برود.
-         */
+
         return startOfWeek(
             LocalDate.now()
         )
@@ -454,104 +435,92 @@ class HabitDetailViewModel @Inject constructor(
             uiState.userHabit
                 ?: return
 
+
+        if (current.isCompleted) {
+            return
+        }
+
+
+        if (current.completedToday) {
+            return
+        }
+
         viewModelScope.launch {
 
-            val result =
+            val updatedHabit =
                 completeHabitUseCase(
                     current
                 )
+                    ?: return@launch
 
-            result?.let { updatedHabit ->
 
-                repository.updateHabit(
-                    updatedHabit
+            repository.updateHabit(
+                updatedHabit
+            )
+
+
+            if (updatedHabit.isCompleted) {
+
+                reminderScheduler.cancel(
+                    updatedHabit.id
                 )
 
-                if (
-                    updatedHabit.isCompleted
-                ) {
+            }
 
-                    reminderScheduler.cancel(
-                        updatedHabit.id
-                    )
 
-                }
+            uiState =
+                uiState.copy(
 
-                /*
-                 * اگر همین امروز عادت به‌طور کامل تمام شده،
-                 * هفته فعلی دیگر باید سقف تقویم باشد.
-                 *
-                 * چون updatedHabit.isCompleted و
-                 * updatedHabit.lastCompletedDate
-                 * همینجا تغییر کرده‌اند،
-                 * getLastAllowedWeek()
-                 * از این به بعد هفته تکمیل نهایی را برمی‌گرداند.
-                 */
-                uiState =
-                    uiState.copy(
+                    userHabit =
+                        updatedHabit,
 
-                        userHabit =
-                            updatedHabit,
+                    completedToday =
+                        updatedHabit.completedToday,
 
-                        completedToday =
-                            updatedHabit.completedToday,
+                    canCompleteToday =
+                        false,
 
-                        canCompleteToday =
-                            false,
+                    showCompleteDialog =
+                        updatedHabit.isCompleted
 
-                        showCompleteDialog =
-                            updatedHabit.isCompleted
+                )
 
-                    )
 
-                /*
-                 * اگر عادت همین الان تکمیل نهایی شده،
-                 * هفته‌ای که تکمیل در آن اتفاق افتاده
-                 * باید آخرین هفته قابل مشاهده باشد.
-                 *
-                 * این باعث می‌شود تقویم هیچ‌وقت
-                 * به هفته‌ای بعد از پایان واقعی عادت نرود.
-                 */
-                if (
-                    updatedHabit.isCompleted
-                ) {
+            if (updatedHabit.isCompleted) {
 
-                    val completionWeek =
-                        updatedHabit
-                            .lastCompletedDate
-                            ?.let { date ->
+                val completionWeek =
+                    updatedHabit
+                        .lastCompletedDate
+                        ?.let { date ->
 
-                                runCatching {
+                            runCatching {
 
-                                    startOfWeek(
-                                        LocalDate.parse(
-                                            date
-                                        )
+                                startOfWeek(
+                                    LocalDate.parse(
+                                        date
                                     )
+                                )
 
-                                }.getOrNull()
+                            }.getOrNull()
 
-                            }
+                        }
 
-                    if (
-                        completionWeek != null
-                    ) {
+                if (completionWeek != null) {
 
-                        uiState =
-                            uiState.copy(
+                    uiState =
+                        uiState.copy(
 
-                                displayedWeekStart =
-                                    completionWeek
+                            displayedWeekStart =
+                                completionWeek
 
-                            )
-
-                    }
+                        )
 
                 }
-
-                updateCalendar()
 
             }
+
+
+            updateCalendar()
 
         }
 

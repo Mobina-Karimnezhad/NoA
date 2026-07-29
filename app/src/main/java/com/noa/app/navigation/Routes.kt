@@ -39,7 +39,22 @@ sealed class Routes(val route: String) {
 
     data object AI : Routes("ai")
 
+    data object AchievementHabitDetail :
+        Routes("achievement_habit_detail/{habitId}") {
+
+        fun createRoute(
+            habitId: Int
+        ): String {
+
+            return "achievement_habit_detail/$habitId"
+
+        }
+
+    }
+
     data object Statistics : Routes("statistics")
+
+    data object Achievements : Routes("achievements")
 
     data object Settings : Routes("settings")
 

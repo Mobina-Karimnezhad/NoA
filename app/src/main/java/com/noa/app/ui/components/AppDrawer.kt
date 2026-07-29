@@ -3,6 +3,7 @@ package com.noa.app.ui.components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -10,10 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import androidx.compose.material3.Switch
 
 @Composable
 fun AppDrawer(
@@ -32,6 +35,8 @@ fun AppDrawer(
 
     onProfileClick: () -> Unit,
 
+    onAchievementsClick: () -> Unit,
+
     isDarkTheme: Boolean,
 
     onDarkThemeChange: (Boolean) -> Unit
@@ -40,32 +45,37 @@ fun AppDrawer(
 
     ModalDrawerSheet(
 
-        modifier = Modifier
-            .width(290.dp),
+        modifier =
+            Modifier.width(290.dp),
 
-        drawerContainerColor = androidx.compose.material3.MaterialTheme
-            .colorScheme
-            .surfaceContainerLow
+        drawerContainerColor =
+            MaterialTheme
+                .colorScheme
+                .surfaceContainerLow
 
     ) {
 
         Column(
 
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(
-
-                    horizontal = 16.dp
-
-                )
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .padding(
+                        horizontal = 16.dp
+                    )
 
         ) {
 
+            // =====================================================
+            // Drawer Header
+            // =====================================================
+
             Box(
 
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(72.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(72.dp),
 
                 contentAlignment =
                     Alignment.Center
@@ -74,11 +84,27 @@ fun AppDrawer(
 
                 Text(
 
-                    text = "منوی نوآ"
+                    text =
+                        "منوی نوآ",
+
+                    style =
+                        MaterialTheme
+                            .typography
+                            .titleLarge,
+
+                    color =
+                        MaterialTheme
+                            .colorScheme
+                            .onSurface
 
                 )
 
             }
+
+
+            // =====================================================
+            // Profile
+            // =====================================================
 
             NavigationDrawerItem(
 
@@ -86,13 +112,15 @@ fun AppDrawer(
 
                     Text(
 
-                        text = "پروفایل من"
+                        text =
+                            "پروفایل من"
 
                     )
 
                 },
 
-                selected = false,
+                selected =
+                    false,
 
                 icon = {
 
@@ -101,7 +129,8 @@ fun AppDrawer(
                         imageVector =
                             Icons.Default.Person,
 
-                        contentDescription = null
+                        contentDescription =
+                            "پروفایل من"
 
                     )
 
@@ -121,15 +150,83 @@ fun AppDrawer(
 
             )
 
+
+            Spacer(
+
+                modifier =
+                    Modifier.height(8.dp)
+
+            )
+
+
+            // =====================================================
+            // Achievements
+            // =====================================================
+
+            NavigationDrawerItem(
+
+                label = {
+
+                    Text(
+
+                        text =
+                            "دستاوردهای من"
+
+                    )
+
+                },
+
+                selected =
+                    false,
+
+                icon = {
+
+                    Icon(
+
+                        imageVector =
+                            Icons.Default.EmojiEvents,
+
+                        contentDescription =
+                            "دستاوردهای من"
+
+                    )
+
+                },
+
+                onClick = {
+
+                    scope.launch {
+
+                        drawerState.close()
+
+                    }
+
+                    onAchievementsClick()
+
+                }
+
+            )
+
+
+            Spacer(
+
+                modifier =
+                    Modifier.height(16.dp)
+
+            )
+
+
+            // =====================================================
+            // Dark Mode
+            // =====================================================
+
             Row(
 
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .padding(
-                            top = 16.dp,
-                            start = 12.dp,
-                            end = 12.dp
+                            horizontal = 12.dp
                         ),
 
                 verticalAlignment =
@@ -143,7 +240,12 @@ fun AppDrawer(
                         "حالت شب",
 
                     modifier =
-                        Modifier.weight(1f)
+                        Modifier.weight(1f),
+
+                    color =
+                        MaterialTheme
+                            .colorScheme
+                            .onSurface
 
                 )
 
@@ -153,11 +255,8 @@ fun AppDrawer(
                     checked =
                         isDarkTheme,
 
-                    onCheckedChange = {
-
-                        onDarkThemeChange(it)
-
-                    }
+                    onCheckedChange =
+                        onDarkThemeChange
 
                 )
 

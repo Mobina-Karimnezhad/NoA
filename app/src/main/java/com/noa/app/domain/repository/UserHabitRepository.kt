@@ -7,6 +7,14 @@ interface UserHabitRepository {
 
     fun getAllHabits(): Flow<List<UserHabit>>
 
+    fun getActiveHabits(): Flow<List<UserHabit>>
+
+    fun getCompletedHabits(): Flow<List<UserHabit>>
+
+    fun getCompletedHabitById(
+        id: Int
+    ): Flow<UserHabit?>
+
     suspend fun getHabit(id: Int): UserHabit?
 
     fun getHabitById(id: Int): Flow<UserHabit?>

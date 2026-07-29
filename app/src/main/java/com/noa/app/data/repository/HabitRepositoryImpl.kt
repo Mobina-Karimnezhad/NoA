@@ -18,6 +18,51 @@ class HabitRepositoryImpl(
         }
     }
 
+    override fun getActiveHabits(): Flow<List<UserHabit>> {
+
+        return dao
+            .observeActiveHabits()
+            .map { list ->
+
+                list.map {
+                    it.toDomain()
+                }
+
+            }
+
+    }
+
+    override fun getCompletedHabits():
+            Flow<List<UserHabit>> {
+
+        return dao
+            .observeCompletedHabits()
+            .map { list ->
+
+                list.map {
+                    it.toDomain()
+                }
+
+            }
+
+    }
+
+    override fun getCompletedHabitById(
+        id: Int
+    ): Flow<UserHabit?> {
+
+        return dao
+            .observeCompletedHabitById(
+                id
+            )
+            .map {
+
+                it?.toDomain()
+
+            }
+
+    }
+
     override suspend fun getHabit(id: Int): UserHabit? {
         return dao.getHabit(id)?.toDomain()
     }

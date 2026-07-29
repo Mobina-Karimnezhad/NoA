@@ -21,6 +21,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.noa.app.ui.screens.achievements.AchievementsScreen
+import com.noa.app.ui.screens.achievementdetail.AchievementHabitDetailScreen
+
 
 @Composable
 fun NoANavGraph(
@@ -246,6 +249,14 @@ fun NoANavGraph(
 
                 },
 
+                onAchievementsClick = {
+
+                    navController.navigate(
+                        Routes.Achievements.route
+                    )
+
+                },
+
                 isDarkTheme =
                     isDarkTheme,
 
@@ -393,6 +404,45 @@ fun NoANavGraph(
                         }
 
                     }
+
+                }
+
+            )
+
+        }
+
+
+        composable(Routes.Achievements.route) {
+
+            AchievementsScreen(
+
+                onBack = {
+
+                    navController.popBackStack()
+
+                },
+
+                onHabitClick = { habitId ->
+
+                    navController.navigate(
+                        Routes.AchievementHabitDetail
+                            .createRoute(habitId)
+                    )
+
+                }
+
+            )
+
+        }
+
+
+        composable(Routes.AchievementHabitDetail.route) {
+
+            AchievementHabitDetailScreen(
+
+                onBack = {
+
+                    navController.popBackStack()
 
                 }
 

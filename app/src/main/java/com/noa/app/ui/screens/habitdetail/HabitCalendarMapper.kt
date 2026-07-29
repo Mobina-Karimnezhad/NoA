@@ -128,39 +128,32 @@ object HabitCalendarMapper {
             val status =
                 when {
 
-                    // قبل از شروع عادت
                     date.isBefore(createdDate) ->
                         HabitCalendarDayStatus.NOT_SELECTED
 
 
-                    // بعد از تکمیل نهایی عادت
                     completionDate != null &&
                             date.isAfter(completionDate) ->
                         HabitCalendarDayStatus.NOT_SELECTED
 
 
-                    // روزهای خارج از برنامه عادت
                     dayOfWeek !in userHabit.selectedDays ->
                         HabitCalendarDayStatus.NOT_SELECTED
 
 
-                    // امروز
                     date == today &&
                             date !in completionDates ->
                         HabitCalendarDayStatus.TODAY
 
 
-                    // روزهای آینده
                     date.isAfter(today) ->
                         HabitCalendarDayStatus.FUTURE
 
 
-                    // روزهای انجام‌شده
                     date in completionDates ->
                         HabitCalendarDayStatus.COMPLETED
 
 
-                    // روزهای گذشته و انجام‌نشده
                     else ->
                         HabitCalendarDayStatus.MISSED
 

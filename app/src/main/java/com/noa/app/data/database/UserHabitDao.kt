@@ -49,4 +49,31 @@ interface UserHabitDao {
 
     @Query("SELECT * FROM user_habits")
     suspend fun getAllHabitsList(): List<UserHabitEntity>
+
+    @Query("""
+    SELECT *
+    FROM user_habits
+    WHERE isCompleted = 0
+""")
+    fun observeActiveHabits(): Flow<List<UserHabitEntity>>
+
+
+    @Query("""
+    SELECT *
+    FROM user_habits
+    WHERE isCompleted = 1
+    ORDER BY lastCompletedDate DESC
+""")
+    fun observeCompletedHabits(): Flow<List<UserHabitEntity>>
+
+
+    @Query("""
+    SELECT *
+    FROM user_habits
+    WHERE id = :id
+    AND isCompleted = 1
+""")
+    fun observeCompletedHabitById(
+        id: Int
+    ): Flow<UserHabitEntity?>
 }
