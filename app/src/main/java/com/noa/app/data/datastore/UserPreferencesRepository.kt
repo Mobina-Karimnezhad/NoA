@@ -262,4 +262,36 @@ class UserPreferencesRepository(
 
     }
 
+
+    // -----------------------------
+    // Last Weekly Insight Check
+    // -----------------------------
+
+    val lastWeeklyInsightCheck: Flow<String?> =
+
+        context.dataStore.data.map {
+
+            it[
+                UserPreferences.LAST_WEEKLY_INSIGHT_CHECK
+            ]
+
+        }
+
+
+    suspend fun saveLastWeeklyInsightCheck(
+
+        weekStart: String
+
+    ) {
+
+        context.dataStore.edit {
+
+            it[
+                UserPreferences.LAST_WEEKLY_INSIGHT_CHECK
+            ] = weekStart
+
+        }
+
+    }
+
 }

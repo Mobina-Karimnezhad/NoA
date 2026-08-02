@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,6 +37,8 @@ fun AppDrawer(
     onProfileClick: () -> Unit,
 
     onAchievementsClick: () -> Unit,
+
+    onMyPerformanceClick: () -> Unit,
 
     isDarkTheme: Boolean,
 
@@ -202,6 +205,63 @@ fun AppDrawer(
                     }
 
                     onAchievementsClick()
+
+                }
+
+            )
+
+
+            Spacer(
+
+                modifier =
+                    Modifier.height(8.dp)
+
+            )
+
+
+            // =====================================================
+            // My Performance
+            // =====================================================
+
+            NavigationDrawerItem(
+
+                label = {
+
+                    Text(
+
+                        text =
+                            "عملکرد من"
+
+                    )
+
+                },
+
+                selected =
+                    false,
+
+                icon = {
+
+                    Icon(
+
+                        imageVector =
+                            Icons.Default.Insights,
+
+                        contentDescription =
+                            "عملکرد من"
+
+                    )
+
+                },
+
+                onClick = {
+
+                    scope.launch {
+
+                        drawerState.close()
+
+                    }
+
+                    onMyPerformanceClick()
 
                 }
 

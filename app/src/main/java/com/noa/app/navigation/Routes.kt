@@ -58,6 +58,7 @@ sealed class Routes(val route: String) {
 
     data object Settings : Routes("settings")
 
+    data object MyPerformance : Routes("my_performance")
 
     data object Profile : Routes("profile")
 

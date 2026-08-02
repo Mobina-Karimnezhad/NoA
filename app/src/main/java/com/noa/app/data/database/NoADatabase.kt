@@ -7,9 +7,10 @@ import androidx.room.TypeConverters
 @Database(
     entities = [
         UserHabitEntity::class,
-        HabitCompletionEntity::class
+        HabitCompletionEntity::class,
+        UserInsightEntity::class
     ],
-    version = 6,
+    version = 8,
     exportSchema = false
 )
 @TypeConverters(WeekDayConverter::class)
@@ -18,6 +19,8 @@ abstract class NoADatabase : RoomDatabase() {
     abstract fun userHabitDao(): UserHabitDao
 
     abstract fun habitCompletionDao(): HabitCompletionDao
+
+    abstract fun userInsightDao(): UserInsightDao
 
 
 }

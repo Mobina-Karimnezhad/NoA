@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.noa.app.ui.screens.achievements.AchievementsScreen
 import com.noa.app.ui.screens.achievementdetail.AchievementHabitDetailScreen
+import com.noa.app.ui.screens.myperformance.MyPerformanceScreen
 
 
 @Composable
@@ -257,6 +258,14 @@ fun NoANavGraph(
 
                 },
 
+                onMyPerformanceClick = {
+
+                    navController.navigate(
+                        Routes.MyPerformance.route
+                    )
+
+                },
+
                 isDarkTheme =
                     isDarkTheme,
 
@@ -439,6 +448,20 @@ fun NoANavGraph(
         composable(Routes.AchievementHabitDetail.route) {
 
             AchievementHabitDetailScreen(
+
+                onBack = {
+
+                    navController.popBackStack()
+
+                }
+
+            )
+
+        }
+
+        composable(Routes.MyPerformance.route) {
+
+            MyPerformanceScreen(
 
                 onBack = {
 

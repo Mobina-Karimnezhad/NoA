@@ -726,6 +726,99 @@ fun HabitDetailScreen(
 
     }
 
+    /*
+     * =========================================================
+     * Realtime Insight Popup (Streak / etc.)
+     * =========================================================
+     */
+
+    if (
+        uiState.showInsightDialog &&
+        uiState.unreadInsight != null
+    ) {
+
+        AlertDialog(
+
+            onDismissRequest = {
+
+            },
+
+            title = {
+
+                Text(
+
+                    text =
+                        uiState.unreadInsight!!.title,
+
+                    style =
+                        MaterialTheme
+                            .typography
+                            .headlineSmall,
+
+                    textAlign =
+                        TextAlign.Center,
+
+                    modifier =
+                        Modifier.fillMaxWidth()
+
+                )
+
+            },
+
+            text = {
+
+                Text(
+
+                    text =
+                        uiState.unreadInsight!!.message,
+
+                    textAlign =
+                        TextAlign.Center,
+
+                    modifier =
+                        Modifier.fillMaxWidth()
+
+                )
+
+            },
+
+            confirmButton = {
+
+                TextButton(
+
+                    modifier =
+                        Modifier.fillMaxWidth(),
+
+                    onClick = {
+
+                        viewModel
+                            .dismissInsightDialog()
+
+                    }
+
+                ) {
+
+                    Text(
+
+                        text =
+                            "باشه",
+
+                        modifier =
+                            Modifier.fillMaxWidth(),
+
+                        textAlign =
+                            TextAlign.Center
+
+                    )
+
+                }
+
+            }
+
+        )
+
+    }
+
 }
 
 

@@ -36,4 +36,9 @@ object UserPreferences {
             "last_app_open_date"
         )
 
+    val LAST_WEEKLY_INSIGHT_CHECK =
+        stringPreferencesKey(
+            "last_weekly_insight_check"
+        )
+
 }

@@ -4,6 +4,7 @@ import com.noa.app.domain.model.Habit
 import com.noa.app.domain.model.HabitCompletion
 import com.noa.app.domain.model.UserHabit
 import java.time.LocalDate
+import com.noa.app.domain.model.UserInsight
 
 data class HabitDetailUiState(
 
@@ -24,6 +25,14 @@ data class HabitDetailUiState(
     val canCompleteToday: Boolean = false,
 
     val todaySelected: Boolean = false,
+
+    // -------------------------
+    // Insight Popup
+    // -------------------------
+
+    val unreadInsight: UserInsight? = null,
+
+    val showInsightDialog: Boolean = false,
 
     // -------------------------
     // Habit Calendar

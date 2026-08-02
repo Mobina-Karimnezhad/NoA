@@ -20,6 +20,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.noa.app.domain.usecase.MarkInsightAsReadUseCase
+import com.noa.app.domain.usecase.GetUnreadRealtimeInsightUseCase
+import com.noa.app.domain.usecase.GenerateStreakInsightUseCase
 
 @HiltViewModel
 class HabitDetailViewModel @Inject constructor(
@@ -31,6 +34,12 @@ class HabitDetailViewModel @Inject constructor(
     private val habitDataSource: DefaultHabitDataSource,
 
     private val completeHabitUseCase: CompleteHabitUseCase,
+
+    private val generateStreakInsightUseCase: GenerateStreakInsightUseCase,
+
+    private val getUnreadRealtimeInsightUseCase: GetUnreadRealtimeInsightUseCase,
+
+    private val markInsightAsReadUseCase: MarkInsightAsReadUseCase,
 
     private val reminderScheduler: ReminderScheduler,
 
@@ -115,11 +124,9 @@ class HabitDetailViewModel @Inject constructor(
 
                     if (userHabit != null) {
 
-                        initializeCalendar(
-                            userHabit
-                        )
-
+                        initializeCalendar(userHabit)
                         observeCompletions()
+                        checkUnreadInsight()
 
                     }
 
@@ -426,6 +433,32 @@ class HabitDetailViewModel @Inject constructor(
     }
 
     // =========================================================
+    // Check Unread Insight
+    // =========================================================
+
+    private fun checkUnreadInsight() {
+
+        viewModelScope.launch {
+
+            val insight = getUnreadRealtimeInsightUseCase(habitId)
+
+            if (insight != null) {
+
+                uiState = uiState.copy(
+
+                    unreadInsight = insight,
+
+                    showInsightDialog = true
+
+                )
+
+            }
+
+        }
+
+    }
+
+    // =========================================================
     // Complete Habit Today
     // =========================================================
 
@@ -454,9 +487,9 @@ class HabitDetailViewModel @Inject constructor(
                     ?: return@launch
 
 
-            repository.updateHabit(
-                updatedHabit
-            )
+            repository.updateHabit(updatedHabit)
+
+            generateStreakInsightUseCase(updatedHabit)
 
 
             if (updatedHabit.isCompleted) {
@@ -563,6 +596,30 @@ class HabitDetailViewModel @Inject constructor(
                     false
 
             )
+
+    }
+
+    // =========================================================
+// Dismiss Insight Dialog
+// =========================================================
+
+    fun dismissInsightDialog() {
+
+        val insight = uiState.unreadInsight ?: return
+
+        viewModelScope.launch {
+
+            markInsightAsReadUseCase(insight.id)
+
+            uiState = uiState.copy(
+
+                unreadInsight = null,
+
+                showInsightDialog = false
+
+            )
+
+        }
 
     }
 

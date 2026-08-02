@@ -16,6 +16,9 @@ import com.noa.app.data.datastore.UserPreferencesRepository
 import com.noa.app.data.database.HabitCompletionDao
 import com.noa.app.data.repository.HabitCompletionRepositoryImpl
 import com.noa.app.domain.repository.HabitCompletionRepository
+import com.noa.app.data.database.UserInsightDao
+import com.noa.app.data.repository.UserInsightRepositoryImpl
+import com.noa.app.domain.repository.UserInsightRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -53,6 +56,16 @@ object DatabaseModule {
         return database.habitCompletionDao()
     }
 
+
+    @Provides
+    fun provideUserInsightDao(
+        database: NoADatabase
+    ): UserInsightDao {
+
+        return database.userInsightDao()
+
+    }
+
     @Provides
     @Singleton
     fun provideUserHabitRepository(
@@ -69,6 +82,19 @@ object DatabaseModule {
     ): HabitCompletionRepository {
 
         return HabitCompletionRepositoryImpl(dao)
+
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideUserInsightRepository(
+        dao: UserInsightDao
+    ): UserInsightRepository {
+
+        return UserInsightRepositoryImpl(
+            dao
+        )
 
     }
 

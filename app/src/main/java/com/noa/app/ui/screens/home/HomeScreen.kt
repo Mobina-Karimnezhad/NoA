@@ -26,6 +26,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.Alignment
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.DrawerValue
@@ -44,6 +47,8 @@ fun HomeScreen(
     onProfileClick: () -> Unit = {},
 
     onAchievementsClick: () -> Unit = {},
+
+    onMyPerformanceClick: () -> Unit = {},
 
     isDarkTheme: Boolean,
 
@@ -79,6 +84,9 @@ fun HomeScreen(
                 onProfileClick = onProfileClick,
                 onAchievementsClick = {
                     onAchievementsClick()
+                },
+                onMyPerformanceClick = {
+                    onMyPerformanceClick()
                 },
                 isDarkTheme = isDarkTheme,
                 onDarkThemeChange = onDarkThemeChange
@@ -216,6 +224,89 @@ fun HomeScreen(
             }
 
         }
+
+    }
+
+    /*
+     * =========================================================
+     * Weekly Insights Popup
+     * =========================================================
+     */
+
+    if (viewModel.showWeeklyInsightsDialog) {
+
+        AlertDialog(
+
+            onDismissRequest = {
+
+            },
+
+            title = {
+
+                Text(
+
+                    text = "گزارش هفته‌ی گذشته",
+
+                    style = MaterialTheme.typography.headlineSmall,
+
+                    textAlign = TextAlign.Center,
+
+                    modifier = Modifier.fillMaxWidth()
+
+                )
+
+            },
+
+            text = {
+
+                Column {
+
+                    viewModel.weeklyInsights.forEach { insight ->
+
+                        Text(
+
+                            text =
+                                "برای عادت «${viewModel.habitLabelFor(insight.userHabitId)}»:\n${insight.message}",
+
+                            modifier = Modifier.padding(vertical = 6.dp)
+
+                        )
+
+                    }
+
+                }
+
+            },
+
+            confirmButton = {
+
+                TextButton(
+
+                    modifier = Modifier.fillMaxWidth(),
+
+                    onClick = {
+
+                        viewModel.dismissWeeklyInsightsDialog()
+
+                    }
+
+                ) {
+
+                    Text(
+
+                        text = "باشه",
+
+                        modifier = Modifier.fillMaxWidth(),
+
+                        textAlign = TextAlign.Center
+
+                    )
+
+                }
+
+            }
+
+        )
 
     }
 
