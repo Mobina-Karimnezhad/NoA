@@ -43,7 +43,7 @@ class DefaultHabitDataSource @Inject constructor() {
             Habit(
                 id = 6,
                 title = "مهارت",
-                description = "هر روز یک قدم به یادگیری مهارت جدید نزدیک‌تر شو",
+                description = "یک قدم به یادگیری مهارت جدید نزدیک‌تر شو",
                 imageRes = R.drawable.habit_skill
             ),
             Habit(
