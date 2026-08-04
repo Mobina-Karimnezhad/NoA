@@ -39,6 +39,18 @@ class DefaultHabitDataSource @Inject constructor() {
                 title = "خواب منظم",
                 description = "با خواب بهتر، روز بهتری بساز",
                 imageRes = R.drawable.habit_sleep
+            ),
+            Habit(
+                id = 6,
+                title = "مهارت",
+                description = "هر روز یک قدم به یادگیری مهارت جدید نزدیک‌تر شو",
+                imageRes = R.drawable.habit_skill
+            ),
+            Habit(
+                id = 7,
+                title = "رژیم غذایی",
+                description = "با تغذیه‌ی سالم‌تر، بهتر زندگی کن",
+                imageRes = R.drawable.habit_diet
             )
         )
     }
