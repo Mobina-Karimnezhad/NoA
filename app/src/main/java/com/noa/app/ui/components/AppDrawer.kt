@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Insights
+import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +40,8 @@ fun AppDrawer(
     onAchievementsClick: () -> Unit,
 
     onMyPerformanceClick: () -> Unit,
+
+    onAiAdvisorClick: () -> Unit,
 
     isDarkTheme: Boolean,
 
@@ -262,6 +265,52 @@ fun AppDrawer(
                     }
 
                     onMyPerformanceClick()
+
+                }
+
+            )
+
+
+            Spacer(
+
+                modifier =
+                    Modifier.height(8.dp)
+
+            )
+
+
+            // =====================================================
+            // AI Advisor
+            // =====================================================
+
+            NavigationDrawerItem(
+
+                label = {
+
+                    Text(
+                        text = "مشاور هوشمند من"
+                    )
+
+                },
+
+                selected = false,
+
+                icon = {
+
+                    Icon(
+                        imageVector = Icons.Default.SmartToy,
+                        contentDescription = "مشاور هوشمند من"
+                    )
+
+                },
+
+                onClick = {
+
+                    scope.launch {
+                        drawerState.close()
+                    }
+
+                    onAiAdvisorClick()
 
                 }
 

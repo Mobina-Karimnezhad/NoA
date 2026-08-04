@@ -15,6 +15,7 @@ import javax.inject.Inject
 import com.noa.app.data.datasource.DefaultHabitDataSource
 import com.noa.app.domain.reminder.ReminderScheduler
 import com.noa.app.data.notification.NotificationPermissionManager
+import com.noa.app.core.ai.PendingAiSuggestionHolder
 
 @HiltViewModel
 class AddHabitViewModel @Inject constructor(
@@ -22,7 +23,8 @@ class AddHabitViewModel @Inject constructor(
     private val repository: UserHabitRepository,
     private val habitDataSource: DefaultHabitDataSource,
     private val reminderScheduler: ReminderScheduler,
-    private val notificationPermissionManager: NotificationPermissionManager
+    private val notificationPermissionManager: NotificationPermissionManager,
+    private val pendingAiSuggestionHolder: PendingAiSuggestionHolder
 
 ) : ViewModel() {
 
@@ -171,6 +173,33 @@ class AddHabitViewModel @Inject constructor(
             ?.let {
                 selectHabit(it)
             }
+
+    }
+
+    fun applyPendingAiSuggestion() {
+
+        val suggestion =
+            pendingAiSuggestionHolder.consume()
+                ?: return
+
+        val habit =
+            uiState.habits.firstOrNull {
+                it.id == suggestion.habitId
+            } ?: return
+
+        uiState = uiState.copy(
+
+            selectedHabit = habit,
+
+            customTitle = suggestion.customTitle,
+
+            targetDays = suggestion.targetDays,
+
+            selectedDays = suggestion.selectedDays,
+
+            reminderTime = suggestion.reminderTime
+
+        )
 
     }
 

@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import com.noa.app.ui.screens.achievements.AchievementsScreen
 import com.noa.app.ui.screens.achievementdetail.AchievementHabitDetailScreen
 import com.noa.app.ui.screens.myperformance.MyPerformanceScreen
+import com.noa.app.ui.screens.aiadvisor.AiAdvisorScreen
 
 
 @Composable
@@ -175,7 +176,10 @@ fun NoANavGraph(
                 onContinue = { habit ->
 
                     navController.navigate(
-                        Routes.AddHabit.createRoute(habit.id)
+                        Routes.AddHabit.createRoute(
+                            habitId = habit.id,
+                            isOnboarding = true
+                        )
                     )
 
                 }
@@ -266,6 +270,14 @@ fun NoANavGraph(
 
                 },
 
+                onAiAdvisorClick = {
+
+                    navController.navigate(
+                        Routes.AI.route
+                    )
+
+                },
+
                 isDarkTheme =
                     isDarkTheme,
 
@@ -351,17 +363,26 @@ fun NoANavGraph(
                 ?.getString("habitId")
                 ?.toIntOrNull()
 
+            val isOnboarding =
+                backStackEntry.arguments
+                    ?.getString("isOnboarding")
+                    ?.toBoolean() ?: false
+
             AddHabitScreen(
 
                 initialHabitId = habitId,
 
+                onAiAdvisorClick = {
+
+                    navController.navigate(
+                        Routes.AI.route
+                    )
+
+                },
+
                 onFinished = {
 
-                    if (habitId == null) {
-
-                        navController.popBackStack()
-
-                    } else {
+                    if (isOnboarding) {
 
                         navController.navigate(
                             Routes.FirstHabitCelebration.route
@@ -374,6 +395,10 @@ fun NoANavGraph(
                             }
 
                         }
+
+                    } else {
+
+                        navController.popBackStack()
 
                     }
 
@@ -466,6 +491,35 @@ fun NoANavGraph(
                 onBack = {
 
                     navController.popBackStack()
+
+                }
+
+            )
+
+        }
+
+
+        composable(Routes.AI.route) {
+
+            AiAdvisorScreen(
+
+                onBack = {
+                    navController.popBackStack()
+                },
+
+                onSuggestionAccepted = { habitId ->
+
+                    navController.navigate(
+                        Routes.AddHabit.createRoute(
+                            habitId = habitId
+                        )
+                    ) {
+
+                        popUpTo(Routes.Home.route) {
+                            inclusive = false
+                        }
+
+                    }
 
                 }
 

@@ -55,7 +55,9 @@ fun AddHabitScreen(
 
     onCancel: () -> Unit,
 
-    viewModel: AddHabitViewModel = hiltViewModel(),
+    onAiAdvisorClick: () -> Unit = {},
+
+    viewModel: AddHabitViewModel = hiltViewModel()
 
 ) {
 
@@ -86,6 +88,13 @@ fun AddHabitScreen(
             }?.let(viewModel::selectHabit)
 
         }
+
+
+    }
+
+    LaunchedEffect(Unit) {
+
+        viewModel.applyPendingAiSuggestion()
 
     }
 
@@ -209,6 +218,20 @@ fun AddHabitScreen(
         )
 
         Spacer(modifier = Modifier.height(32.dp))
+
+        OutlinedButton(
+
+            onClick = onAiAdvisorClick,
+
+            modifier = Modifier.fillMaxWidth()
+
+        ) {
+
+            Text("از دستیار هوشمند کمک بگیر")
+
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = "دسته",

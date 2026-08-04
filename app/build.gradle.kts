@@ -1,3 +1,13 @@
+import java.io.FileInputStream  //***********
+import java.util.Properties
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
+} //************
+
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -19,6 +29,18 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField(       //*************
+            "String",
+            "AI_API_KEY",
+            "\"${localProperties.getProperty("AI_API_KEY", "")}\""
+        )
+
+        buildConfigField(        //***********
+            "String",
+            "AI_MODEL",
+            "\"${localProperties.getProperty("AI_MODEL", "openrouter/free")}\""
+        )
     }
     buildTypes {
         release { isMinifyEnabled = false
@@ -36,6 +58,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true //**********
     }
 }
 dependencies {
@@ -70,4 +93,5 @@ dependencies {
     implementation("io.coil-kt.coil3:coil-compose:3.3.0")
     implementation("com.vanniktech:android-image-cropper:4.6.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0") //******
 }

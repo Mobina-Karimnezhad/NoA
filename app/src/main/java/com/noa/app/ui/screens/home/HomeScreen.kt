@@ -50,6 +50,8 @@ fun HomeScreen(
 
     onMyPerformanceClick: () -> Unit = {},
 
+    onAiAdvisorClick: () -> Unit = {},
+
     isDarkTheme: Boolean,
 
     onDarkThemeChange: (Boolean) -> Unit,
@@ -87,6 +89,9 @@ fun HomeScreen(
                 },
                 onMyPerformanceClick = {
                     onMyPerformanceClick()
+                },
+                onAiAdvisorClick = {
+                    onAiAdvisorClick()
                 },
                 isDarkTheme = isDarkTheme,
                 onDarkThemeChange = onDarkThemeChange

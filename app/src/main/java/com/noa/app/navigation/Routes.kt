@@ -10,14 +10,29 @@ sealed class Routes(val route: String) {
 
     data object Home : Routes("home")
 
-    data object AddHabit : Routes("add_habit?habitId={habitId}")
+    data object AddHabit :
+        Routes("add_habit?habitId={habitId}&isOnboarding={isOnboarding}")
 
-    fun createRoute(habitId: Int? = null): String {
+    fun createRoute(
 
-        return if (habitId == null)
-            "add_habit"
-        else
-            "add_habit?habitId=$habitId"
+        habitId: Int? = null,
+
+        isOnboarding: Boolean = false
+
+    ): String {
+
+        val habitIdPart =
+            if (habitId == null) "" else "habitId=$habitId"
+
+        val onboardingPart =
+            "isOnboarding=$isOnboarding"
+
+        val query =
+            listOf(habitIdPart, onboardingPart)
+                .filter { it.isNotEmpty() }
+                .joinToString("&")
+
+        return "add_habit?$query"
 
     }
 
