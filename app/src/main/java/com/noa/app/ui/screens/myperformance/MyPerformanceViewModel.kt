@@ -9,6 +9,7 @@ import com.noa.app.data.datasource.DefaultHabitDataSource
 import com.noa.app.domain.helper.PersianCalendarUtils
 import com.noa.app.domain.repository.UserHabitRepository
 import com.noa.app.domain.repository.UserInsightRepository
+import com.noa.app.domain.usecase.GeneratePersonalizedAnalysisUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
@@ -37,7 +38,9 @@ class MyPerformanceViewModel @Inject constructor(
 
     private val userHabitRepository: UserHabitRepository,
 
-    private val habitDataSource: DefaultHabitDataSource
+    private val habitDataSource: DefaultHabitDataSource,
+
+    private val generatePersonalizedAnalysisUseCase: GeneratePersonalizedAnalysisUseCase
 
 ) : ViewModel() {
 
@@ -48,6 +51,12 @@ class MyPerformanceViewModel @Inject constructor(
 
     private val suggestedHabits =
         habitDataSource.getAll()
+
+    var isAnalyzing by mutableStateOf(false)
+        private set
+
+    var analysisFeedback by mutableStateOf<String?>(null)
+        private set
 
     init {
 
@@ -80,10 +89,18 @@ class MyPerformanceViewModel @Inject constructor(
                         }
 
                     val label =
-                        if (userHabit != null && habit != null)
-                            "${habit.title} - ${userHabit.customTitle}"
-                        else
-                            userHabit?.customTitle ?: ""
+                        when {
+
+                            insight.userHabitId == null ->
+                                "همه‌ی عادت‌ها"
+
+                            userHabit != null && habit != null ->
+                                "${habit.title} - ${userHabit.customTitle}"
+
+                            else ->
+                                userHabit?.customTitle ?: ""
+
+                        }
 
                     val date =
                         Instant.ofEpochMilli(insight.createdAt)
@@ -113,6 +130,45 @@ class MyPerformanceViewModel @Inject constructor(
                 historyItems = items
 
             }
+
+        }
+
+    }
+
+    fun runPersonalizedAnalysis() {
+
+        isAnalyzing = true
+
+        analysisFeedback = null
+
+        viewModelScope.launch {
+
+            val result =
+                generatePersonalizedAnalysisUseCase()
+
+            isAnalyzing = false
+
+            result.fold(
+
+                onSuccess = { count ->
+
+                    analysisFeedback =
+                        if (count == 0)
+                            "برای استفاده از تحلیل هوشمند، باید حداقل یکی از عادت‌هات را ۷ بار «انجام شد» ثبت کرده باشی. چند روز دیگه دوباره امتحان کن."
+                        else
+                            "$count تحلیل جدید اضافه شد."
+
+                },
+
+                onFailure = { error ->
+
+                    analysisFeedback =
+                        error.message
+                            ?: "خطایی پیش اومد. دوباره امتحان کن."
+
+                }
+
+            )
 
         }
 

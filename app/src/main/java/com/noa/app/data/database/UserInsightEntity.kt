@@ -9,7 +9,7 @@ data class UserInsightEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
-    val userHabitId: Int,
+    val userHabitId: Int?,
 
     val createdAt: Long,
 

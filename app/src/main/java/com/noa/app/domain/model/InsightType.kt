@@ -12,6 +12,8 @@ enum class InsightType {
 
     STREAK,
 
-    CONSISTENCY
+    CONSISTENCY,
+
+    AI_SUGGESTION
 
 }

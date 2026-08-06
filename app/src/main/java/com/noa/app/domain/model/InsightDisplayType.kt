@@ -4,6 +4,8 @@ enum class InsightDisplayType {
 
     REALTIME,
 
-    WEEKLY
+    WEEKLY,
+
+    AI_ANALYSIS
 
 }

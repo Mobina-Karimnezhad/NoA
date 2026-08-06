@@ -10,7 +10,7 @@ import androidx.room.TypeConverters
         HabitCompletionEntity::class,
         UserInsightEntity::class
     ],
-    version = 8,
+    version = 9,
     exportSchema = false
 )
 @TypeConverters(WeekDayConverter::class)

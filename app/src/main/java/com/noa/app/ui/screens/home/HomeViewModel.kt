@@ -102,8 +102,11 @@ class HomeViewModel @Inject constructor(
 
 
     fun habitLabelFor(
-        userHabitId: Int
+        userHabitId: Int?
     ): String {
+
+        if (userHabitId == null)
+            return "همه‌ی عادت‌ها"
 
         val userHabit =
             userHabits.firstOrNull {

@@ -5,13 +5,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,8 +37,11 @@ fun MyPerformanceScreen(
 
 ) {
 
-    val historyItems =
-        viewModel.historyItems
+    val historyItems = viewModel.historyItems
+
+    val isAnalyzing = viewModel.isAnalyzing
+
+    val analysisFeedback = viewModel.analysisFeedback
 
     Scaffold(
 
@@ -66,126 +72,184 @@ fun MyPerformanceScreen(
 
     ) { padding ->
 
-        if (historyItems.isEmpty()) {
+        Column(
+
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+
+        ) {
 
             Column(
 
                 modifier =
                     Modifier
-                        .fillMaxSize()
-                        .padding(padding)
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 12.dp)
 
             ) {
 
-                Text(
+                Button(
 
-                    text =
-                        "هنوز هیچ پیامی برات ثبت نشده.",
+                    onClick = {
+                        viewModel.runPersonalizedAnalysis()
+                    },
 
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(24.dp),
+                    enabled = !isAnalyzing,
 
-                    textAlign = TextAlign.Center
+                    modifier = Modifier.fillMaxWidth()
 
-                )
+                ) {
+
+                    if (isAnalyzing) {
+
+                        CircularProgressIndicator(
+                            modifier = Modifier.height(20.dp)
+                        )
+
+                    } else {
+
+                        Text("تحلیل هوشمند")
+
+                    }
+
+                }
+
+                if (analysisFeedback != null) {
+
+                    Text(
+
+                        text = analysisFeedback,
+
+                        style = MaterialTheme.typography.bodySmall,
+
+                        modifier = Modifier.padding(top = 8.dp)
+
+                    )
+
+                }
 
             }
 
-        } else {
+            if (historyItems.isEmpty()) {
 
-            LazyColumn(
+                Column(
 
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(padding)
-                        .padding(horizontal = 24.dp),
+                    modifier = Modifier.fillMaxSize()
 
-                contentPadding =
-                    PaddingValues(vertical = 16.dp),
+                ) {
 
-                verticalArrangement =
-                    Arrangement.spacedBy(12.dp)
+                    Text(
 
-            ) {
-
-                items(
-
-                    items = historyItems,
-
-                    key = { it.id }
-
-                ) { item ->
-
-                    Card(
+                        text =
+                            "هنوز هیچ پیامی برات ثبت نشده.",
 
                         modifier =
-                            Modifier.fillMaxWidth()
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(24.dp),
 
-                    ) {
+                        textAlign = TextAlign.Center
 
-                        Column(
+                    )
+
+                }
+
+            } else {
+
+                LazyColumn(
+
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 24.dp),
+
+                    contentPadding =
+                        PaddingValues(vertical = 16.dp),
+
+                    verticalArrangement =
+                        Arrangement.spacedBy(12.dp)
+
+                ) {
+
+                    items(
+
+                        items = historyItems,
+
+                        key = { it.id }
+
+                    ) { item ->
+
+                        Card(
 
                             modifier =
-                                Modifier.padding(16.dp)
+                                Modifier.fillMaxWidth()
 
                         ) {
 
-                            Text(
+                            Column(
 
-                                text = item.habitLabel,
+                                modifier =
+                                    Modifier.padding(16.dp)
 
-                                style =
-                                    MaterialTheme
-                                        .typography
-                                        .labelMedium,
+                            ) {
 
-                                color =
-                                    MaterialTheme
-                                        .colorScheme
-                                        .primary
+                                Text(
 
-                            )
+                                    text = item.habitLabel,
 
-                            Text(
+                                    style =
+                                        MaterialTheme
+                                            .typography
+                                            .labelMedium,
 
-                                text = item.title,
+                                    color =
+                                        MaterialTheme
+                                            .colorScheme
+                                            .primary
 
-                                style =
-                                    MaterialTheme
-                                        .typography
-                                        .titleMedium
+                                )
 
-                            )
+                                Text(
 
-                            Text(
+                                    text = item.title,
 
-                                text = item.message,
+                                    style =
+                                        MaterialTheme
+                                            .typography
+                                            .titleMedium
 
-                                style =
-                                    MaterialTheme
-                                        .typography
-                                        .bodyMedium
+                                )
 
-                            )
+                                Text(
 
-                            Text(
+                                    text = item.message,
 
-                                text = item.dateText,
+                                    style =
+                                        MaterialTheme
+                                            .typography
+                                            .bodyMedium
 
-                                style =
-                                    MaterialTheme
-                                        .typography
-                                        .labelSmall,
+                                )
 
-                                color =
-                                    MaterialTheme
-                                        .colorScheme
-                                        .outline
+                                Text(
 
-                            )
+                                    text = item.dateText,
+
+                                    style =
+                                        MaterialTheme
+                                            .typography
+                                            .labelSmall,
+
+                                    color =
+                                        MaterialTheme
+                                            .colorScheme
+                                            .outline
+
+                                )
+
+                            }
 
                         }
 
