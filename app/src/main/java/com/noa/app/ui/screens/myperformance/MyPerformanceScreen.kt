@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -16,6 +17,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,7 +39,11 @@ fun MyPerformanceScreen(
 
 ) {
 
-    val historyItems = viewModel.historyItems
+    val filteredItems = viewModel.filteredItems
+
+    val selectedFilter = viewModel.selectedFilter
+
+    val habitFilterOptions = viewModel.habitFilterOptions
 
     val isAnalyzing = viewModel.isAnalyzing
 
@@ -132,7 +138,81 @@ fun MyPerformanceScreen(
 
             }
 
-            if (historyItems.isEmpty()) {
+            LazyRow(
+
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
+
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+
+                contentPadding = PaddingValues(bottom = 12.dp)
+
+            ) {
+
+                item {
+
+                    FilterChip(
+
+                        selected =
+                            selectedFilter == MyPerformanceFilter.All,
+
+                        onClick = {
+                            viewModel.selectFilter(
+                                MyPerformanceFilter.All
+                            )
+                        },
+
+                        label = { Text("همه") }
+
+                    )
+
+                }
+
+                item {
+
+                    FilterChip(
+
+                        selected =
+                            selectedFilter ==
+                                    MyPerformanceFilter.AiAnalysis,
+
+                        onClick = {
+                            viewModel.selectFilter(
+                                MyPerformanceFilter.AiAnalysis
+                            )
+                        },
+
+                        label = { Text("تحلیل‌های هوشمند") }
+
+                    )
+
+                }
+
+                items(
+                    items = habitFilterOptions,
+                    key = { it.userHabitId }
+                ) { option ->
+
+                    FilterChip(
+
+                        selected =
+                            selectedFilter == option,
+
+                        onClick = {
+                            viewModel.selectFilter(option)
+                        },
+
+                        label = { Text(option.label) }
+
+                    )
+
+                }
+
+            }
+
+            if (filteredItems.isEmpty()) {
 
                 Column(
 
@@ -143,7 +223,7 @@ fun MyPerformanceScreen(
                     Text(
 
                         text =
-                            "هنوز هیچ پیامی برات ثبت نشده.",
+                            "پیامی برای این فیلتر پیدا نشد.",
 
                         modifier =
                             Modifier
@@ -175,7 +255,7 @@ fun MyPerformanceScreen(
 
                     items(
 
-                        items = historyItems,
+                        items = filteredItems,
 
                         key = { it.id }
 

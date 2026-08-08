@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.noa.app.data.datasource.DefaultHabitDataSource
 import com.noa.app.domain.helper.PersianCalendarUtils
+import com.noa.app.domain.model.InsightDisplayType
 import com.noa.app.domain.repository.UserHabitRepository
 import com.noa.app.domain.repository.UserInsightRepository
 import com.noa.app.domain.usecase.GeneratePersonalizedAnalysisUseCase
@@ -21,7 +22,11 @@ data class InsightHistoryItem(
 
     val id: Int,
 
+    val userHabitId: Int?,
+
     val habitLabel: String,
+
+    val isAiAnalysis: Boolean,
 
     val title: String,
 
@@ -30,6 +35,22 @@ data class InsightHistoryItem(
     val dateText: String
 
 )
+
+sealed class MyPerformanceFilter {
+
+    data object All : MyPerformanceFilter()
+
+    data object AiAnalysis : MyPerformanceFilter()
+
+    data class ByHabit(
+
+        val userHabitId: Int,
+
+        val label: String
+
+    ) : MyPerformanceFilter()
+
+}
 
 @HiltViewModel
 class MyPerformanceViewModel @Inject constructor(
@@ -49,8 +70,10 @@ class MyPerformanceViewModel @Inject constructor(
     )
         private set
 
-    private val suggestedHabits =
-        habitDataSource.getAll()
+    var selectedFilter by mutableStateOf<MyPerformanceFilter>(
+        MyPerformanceFilter.All
+    )
+        private set
 
     var isAnalyzing by mutableStateOf(false)
         private set
@@ -58,9 +81,55 @@ class MyPerformanceViewModel @Inject constructor(
     var analysisFeedback by mutableStateOf<String?>(null)
         private set
 
+    private val suggestedHabits =
+        habitDataSource.getAll()
+
     init {
 
         observeInsights()
+
+    }
+
+    val filteredItems: List<InsightHistoryItem>
+        get() =
+
+            when (val filter = selectedFilter) {
+
+                MyPerformanceFilter.All ->
+                    historyItems
+
+                MyPerformanceFilter.AiAnalysis ->
+                    historyItems.filter {
+                        it.isAiAnalysis
+                    }
+
+                is MyPerformanceFilter.ByHabit ->
+                    historyItems.filter {
+                        it.userHabitId == filter.userHabitId
+                    }
+
+            }
+
+    val habitFilterOptions: List<MyPerformanceFilter.ByHabit>
+        get() =
+
+            historyItems
+                .filter {
+                    it.userHabitId != null && !it.isAiAnalysis
+                }
+                .distinctBy { it.userHabitId }
+                .map {
+
+                    MyPerformanceFilter.ByHabit(
+                        userHabitId = it.userHabitId!!,
+                        label = it.habitLabel
+                    )
+
+                }
+
+    fun selectFilter(filter: MyPerformanceFilter) {
+
+        selectedFilter = filter
 
     }
 
@@ -111,7 +180,13 @@ class MyPerformanceViewModel @Inject constructor(
 
                         id = insight.id,
 
+                        userHabitId = insight.userHabitId,
+
                         habitLabel = label,
+
+                        isAiAnalysis =
+                            insight.displayType ==
+                                    InsightDisplayType.AI_ANALYSIS,
 
                         title = insight.title,
 
@@ -154,9 +229,9 @@ class MyPerformanceViewModel @Inject constructor(
 
                     analysisFeedback =
                         if (count == 0)
-                            "برای استفاده از تحلیل هوشمند، باید حداقل یکی از عادت‌هات را ۷ بار «انجام شد» ثبت کرده باشی. چند روز دیگه دوباره امتحان کن."
+                            "برای استفاده از تحلیل هوشمند، باید حداقل یکی از عادت‌هات را ۷ بار «انجام شد» ثبت کرده باشی. کمی بیشتر با برنامه کار کن و دوباره امتحان کن."
                         else
-                            "$count تحلیل جدید اضافه شد."
+                            "تحلیل جدید اضافه شد."
 
                 },
 

@@ -11,6 +11,7 @@ import com.noa.app.domain.model.WeekDay
 import com.noa.app.domain.reminder.ReminderScheduler
 import com.noa.app.domain.repository.HabitCompletionRepository
 import com.noa.app.domain.repository.UserHabitRepository
+import com.noa.app.domain.repository.UserInsightRepository
 import com.noa.app.domain.usecase.CompleteHabitUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.DayOfWeek
@@ -40,6 +41,8 @@ class HabitDetailViewModel @Inject constructor(
     private val getUnreadRealtimeInsightUseCase: GetUnreadRealtimeInsightUseCase,
 
     private val markInsightAsReadUseCase: MarkInsightAsReadUseCase,
+
+    private val insightRepository: UserInsightRepository,
 
     private val reminderScheduler: ReminderScheduler,
 
@@ -670,6 +673,10 @@ class HabitDetailViewModel @Inject constructor(
 
             repository.deleteHabit(
                 currentHabit
+            )
+
+            insightRepository.deleteHabitInsights(
+                currentHabit.id
             )
 
             uiState =
